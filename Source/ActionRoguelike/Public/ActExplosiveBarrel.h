@@ -8,6 +8,7 @@
 
 class UCapsuleComponent;
 class UStaticMesh;
+class URadialForceComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActExplosiveBarrel : public AActor
