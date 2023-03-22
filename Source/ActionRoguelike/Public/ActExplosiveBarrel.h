@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "ActExplosiveBarrel.generated.h"
 
+class UCapsuleComponent;
+class UStaticMesh;
+
 UCLASS()
 class ACTIONROGUELIKE_API AActExplosiveBarrel : public AActor
 {
@@ -16,6 +19,16 @@ public:
 	AActExplosiveBarrel();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere)
+	UCapsuleComponent* Collider;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(VisibleAnywhere)
+	URadialForceComponent* ForceComp;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
