@@ -36,7 +36,6 @@ void AActCharacter::BeginPlay()
 void AActCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -51,6 +50,9 @@ void AActCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &AActCharacter::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &AActCharacter::PrimaryAttack);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AActCharacter::Jump);
+
 }
 
 void AActCharacter::MoveForward(float Value)
