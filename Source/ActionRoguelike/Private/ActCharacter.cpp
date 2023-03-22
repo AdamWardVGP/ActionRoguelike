@@ -4,6 +4,7 @@
 #include "ActCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -13,10 +14,15 @@ AActCharacter::AActCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false;
 }
 
 // Called when the game starts or when spawned
@@ -28,7 +34,23 @@ void AActCharacter::BeginPlay()
 
 void AActCharacter::MoveForward(float Value)
 {
-	AddMovementInput(GetActorForwardVector(), Value);
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.f;
+	ControlRot.Roll = 0.f;
+
+	AddMovementInput(ControlRot.Vector(), Value);
+}
+
+void AActCharacter::MoveRight(float Value)
+{
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.f;
+	ControlRot.Roll = 0.f;
+
+	//Movement to the right should be the right vector relative to the forward vector of the camera
+	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+
+	AddMovementInput(RightVector, Value);
 }
 
 // Called every frame
@@ -44,6 +66,9 @@ void AActCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AActCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AActCharacter::MoveRight);
+
 	PlayerInputComponent->BindAxis("Turn", this, &AActCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &AActCharacter::AddControllerPitchInput);
 }
 
