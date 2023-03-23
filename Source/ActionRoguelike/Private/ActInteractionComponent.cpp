@@ -72,7 +72,7 @@ void UActInteractionComponent::PrimaryInteract()
 				//UE_LOG(LogTemp, Warning, TEXT("Actor implements UActGameplayInterface"));
 				APawn* MyPawn = Cast<APawn>(MyOwner);
 				IActGameplayInterface::Execute_Interact(HitActor, MyPawn);
-
+				break;
 			}
 		}
 		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, FColor::Green, false, 5.f, 0, 3.f);

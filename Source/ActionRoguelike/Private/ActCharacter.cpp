@@ -82,6 +82,15 @@ void AActCharacter::MoveRight(float Value)
 
 void AActCharacter::PrimaryAttack()
 {
+	PlayAnimMontage(AttackAnim);
+
+	//TODO change this to an animation event, for now we'll use a timer.
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AActCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+}
+
+
+void AActCharacter::PrimaryAttack_TimeElapsed()
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
 
@@ -90,6 +99,7 @@ void AActCharacter::PrimaryAttack()
 
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
 }
+
 
 void AActCharacter::PrimaryInteract()
 {

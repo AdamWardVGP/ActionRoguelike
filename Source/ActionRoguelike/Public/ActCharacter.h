@@ -9,6 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UActInteractionComponent;
+class UAnimMontage;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActCharacter : public ACharacter
@@ -21,8 +22,19 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackAnim;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	FTimerHandle TimerHandle_PrimaryAttack;
+
+	void PrimaryAttack();
+
+	void PrimaryAttack_TimeElapsed();
+
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
@@ -39,8 +51,6 @@ protected:
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
-
-	void PrimaryAttack();
 
 	void PrimaryInteract();
 
