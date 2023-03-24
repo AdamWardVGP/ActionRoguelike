@@ -54,6 +54,8 @@ void AActCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &AActCharacter::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &AActCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &AActCharacter::SecondaryAttack);
+	PlayerInputComponent->BindAction("UltAttack", IE_Pressed, this, &AActCharacter::UltAttack);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AActCharacter::Jump);
 
@@ -91,6 +93,37 @@ void AActCharacter::PrimaryAttack()
 
 void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 {
+
+}
+
+void AActCharacter::SecondaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	//TODO change this to an animation event, for now we'll use a timer.
+	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &AActCharacter::SecondaryAttack_TimeElapsed, 0.2f);
+}
+
+void AActCharacter::SecondaryAttack_TimeElapsed_Implementation()
+{
+	LaunchProjectileTowardCrosshair(SecondaryProjectileClass);
+}
+
+void AActCharacter::UltAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	//TODO change this to an animation event, for now we'll use a timer.
+	GetWorldTimerManager().SetTimer(TimerHandle_UltAttack, this, &AActCharacter::UltAttack_TimeElapsed, 0.2f);
+}
+
+void AActCharacter::UltAttack_TimeElapsed_Implementation()
+{
+	LaunchProjectileTowardCrosshair(UltProjectileClass);
+}
+
+void AActCharacter::LaunchProjectileTowardCrosshair(TSubclassOf<AActor> Projectile)
+{
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
 	FVector CameraLocation = CameraComp->K2_GetComponentLocation();
@@ -105,10 +138,11 @@ void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 	GetWorld()->LineTraceMultiByObjectType(Hits, CameraLocation, TraceEnd, QueryParams);
 
 	FVector Target;
-	if(!Hits.IsEmpty())
+	if (!Hits.IsEmpty())
 	{
 		Target = Hits[0].ImpactPoint;
-	} else
+	}
+	else
 	{
 		Target = TraceEnd;
 	}
@@ -120,7 +154,7 @@ void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(Projectile, SpawnTM, SpawnParams);
 }
 
 
