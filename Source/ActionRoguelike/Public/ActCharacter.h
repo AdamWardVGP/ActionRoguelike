@@ -33,16 +33,17 @@ protected:
 
 	void PrimaryAttack();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PrimaryAttack_TimeElapsed();
 
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpringArmComponent* SpringArmComp;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UCameraComponent* CameraComp;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UActInteractionComponent* InteractionComp;
 
 	// Called when the game starts or when spawned

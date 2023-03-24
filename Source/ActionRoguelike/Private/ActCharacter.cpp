@@ -88,8 +88,7 @@ void AActCharacter::PrimaryAttack()
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AActCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 }
 
-
-void AActCharacter::PrimaryAttack_TimeElapsed()
+void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
