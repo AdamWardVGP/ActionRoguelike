@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AActCharacter::AActCharacter()
@@ -91,8 +92,30 @@ void AActCharacter::PrimaryAttack()
 void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
 
+	FVector CameraLocation = CameraComp->K2_GetComponentLocation();
+	FRotator CameraRotation = CameraComp->K2_GetComponentRotation();
+	FVector TraceEnd = CameraLocation + (CameraRotation.Vector() * 1000.f);
+
+	TArray<FHitResult> Hits;
+	FCollisionObjectQueryParams QueryParams;
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+
+	GetWorld()->LineTraceMultiByObjectType(Hits, CameraLocation, TraceEnd, QueryParams);
+
+	FVector Target;
+	if(!Hits.IsEmpty())
+	{
+		Target = Hits[0].ImpactPoint;
+	} else
+	{
+		Target = TraceEnd;
+	}
+
+	FRotator ProjectileRot = UKismetMathLibrary::FindLookAtRotation(HandLocation, Target);
+
+	FTransform SpawnTM = FTransform(ProjectileRot, HandLocation);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
