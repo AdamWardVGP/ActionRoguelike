@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AActExplosiveBarrel::AActExplosiveBarrel()
@@ -39,6 +40,15 @@ void AActExplosiveBarrel::PostInitializeComponents()
 void AActExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Log, TEXT("OnActorHit in Explosive Barrel"))
+
+	//Asterisk is overloaded to convert from FString to char[]
+	//https://nerivec.github.io/old-ue4-wiki/pages/logs-printing-messages-to-yourself-during-runtime.html
+	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time: %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
+
+	FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
+	DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.f, true, 1.5f);
+
 	ForceComp->FireImpulse();
 }
 
