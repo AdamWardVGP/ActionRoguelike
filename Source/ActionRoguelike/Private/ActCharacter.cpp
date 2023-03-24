@@ -93,7 +93,7 @@ void AActCharacter::PrimaryAttack()
 
 void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 {
-
+	LaunchProjectileTowardCrosshair(PrimaryProjectileClass);
 }
 
 void AActCharacter::SecondaryAttack()

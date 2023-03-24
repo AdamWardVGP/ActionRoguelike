@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "ActMagicProjectile.h"
-#include "GameFramework/Actor.h"
 #include "ActPhysicsProjectile.generated.h"
 
 class URadialForceComponent;
@@ -14,8 +13,8 @@ class ACTIONROGUELIKE_API AActPhysicsProjectile : public AActMagicProjectile
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
+public:
+
 	AActPhysicsProjectile();
 
 	UPROPERTY(BlueprintReadWrite)
@@ -23,13 +22,5 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	float ProjectileDuration;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };

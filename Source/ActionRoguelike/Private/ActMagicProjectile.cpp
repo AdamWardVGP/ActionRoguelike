@@ -30,7 +30,7 @@ AActMagicProjectile::AActMagicProjectile()
 void AActMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 }
 
 // Called every frame

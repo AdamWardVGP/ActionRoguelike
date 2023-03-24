@@ -28,7 +28,6 @@ protected:
 	URadialForceComponent* ForceComp;
 
 public:	
-	// Called every frame
 	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()

@@ -14,23 +14,9 @@ AActPhysicsProjectile::AActPhysicsProjectile()
 
 	ForceComp = CreateDefaultSubobject<URadialForceComponent>("ForceComponent");
 	ForceComp->SetupAttachment(RootComponent);
-	ForceComp->ForceStrength = 1000.f;
-	ForceComp->Radius = 1000.f;
+	ForceComp->ForceStrength = -100000.f;
+	ForceComp->Radius = 1500.f;
 
 	ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
-}
-
-// Called when the game starts or when spawned
-void AActPhysicsProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-
-}
-
-// Called every frame
-void AActPhysicsProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
