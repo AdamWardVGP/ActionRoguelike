@@ -29,17 +29,16 @@ AActExplosiveBarrel::AActExplosiveBarrel()
 	ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
-// Called when the game starts or when spawned
-void AActExplosiveBarrel::BeginPlay()
+void AActExplosiveBarrel::PostInitializeComponents()
 {
-	Super::BeginPlay();
-	
+	Super::PostInitializeComponents();
+	//OnComponentHit is a struct
+	MeshComp->OnComponentHit.AddDynamic(this, &AActExplosiveBarrel::OnActorHit);
 }
 
-// Called every frame
-void AActExplosiveBarrel::Tick(float DeltaTime)
+void AActExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::Tick(DeltaTime);
-
+	ForceComp->FireImpulse();
 }
 
