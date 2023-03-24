@@ -20,7 +20,7 @@ public:
 	// Sets default values for this actor's properties
 	AActItemChest();
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidComp;
 
 	UPROPERTY(VisibleAnywhere)

@@ -24,7 +24,7 @@ class ACTIONROGUELIKE_API IActGameplayInterface
 public:
 
 	//BlueprintCallable lets us call it in a blueprint
-	//BlueprintNativeEvent - meant to be overridden but has a default implementation.
+	//BlueprintNativeEvent - meant to be overridden *in blueprints* but has a default implementation in C++
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
 };
