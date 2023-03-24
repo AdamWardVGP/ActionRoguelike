@@ -17,13 +17,16 @@ AActExplosiveBarrel::AActExplosiveBarrel()
 	MeshComp->SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 	SetRootComponent(MeshComp);
 
-	Collider = CreateDefaultSubobject<UCapsuleComponent>("Capsule");
-	Collider->SetCapsuleHalfHeight(20.f);
-	Collider->SetCapsuleRadius(15.f);
-	MeshComp->SetupAttachment(Collider);
-
 	ForceComp = CreateDefaultSubobject<URadialForceComponent>("ForceComp");
 	ForceComp->SetupAttachment(MeshComp);
+
+	ForceComp->Radius = 500;
+	ForceComp->ImpulseStrength = 500;
+	ForceComp->ForceStrength = 500;
+	ForceComp->bImpulseVelChange = true;
+
+	// Optional, default constructor of component already adds 4 object types to affect, excluding WorldDynamic
+	ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
 // Called when the game starts or when spawned

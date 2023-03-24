@@ -22,12 +22,9 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere)
-	UCapsuleComponent* Collider;
-
-	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(BlueprintReadWrite)
 	URadialForceComponent* ForceComp;
 
 	// Called when the game starts or when spawned
