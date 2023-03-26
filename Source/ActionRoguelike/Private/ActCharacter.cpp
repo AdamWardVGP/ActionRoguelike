@@ -93,7 +93,14 @@ void AActCharacter::PrimaryAttack()
 
 void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
 {
-	LaunchProjectileTowardCrosshair(PrimaryProjectileClass);
+	// ensure() is an unreal equivalent macro for "try" or assert. it will only throw the first time and lets you continue afterward
+	// ensureAlways() can trigger it every time if you want to be more intrusive
+	// ensure() also doesn't get included in packaged builds.
+	// check() can be used too, but it will halt the entire execution if it's hit and you cant proceed.
+	if(ensure(PrimaryProjectileClass))
+	{
+		LaunchProjectileTowardCrosshair(PrimaryProjectileClass);
+	}
 }
 
 void AActCharacter::SecondaryAttack()

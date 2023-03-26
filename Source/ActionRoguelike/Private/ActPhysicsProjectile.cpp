@@ -14,9 +14,11 @@ AActPhysicsProjectile::AActPhysicsProjectile()
 
 	ForceComp = CreateDefaultSubobject<URadialForceComponent>("ForceComponent");
 	ForceComp->SetupAttachment(RootComponent);
-	ForceComp->ForceStrength = -100000.f;
-	ForceComp->Radius = 1500.f;
+	ForceComp->ForceStrength = -10000.f;
+	ForceComp->Radius = 2000.f;
+	ForceComp->bIgnoreOwningActor = true;
 
+	ForceComp->RemoveObjectTypeToAffect(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
