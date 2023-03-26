@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UActInteractionComponent;
 class UAnimMontage;
+class UActAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActCharacter : public ACharacter
@@ -79,6 +80,9 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryInteract();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UActAttributeComponent* AttributeComp;
 
 public:	
 	// Called every frame

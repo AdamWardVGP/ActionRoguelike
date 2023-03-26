@@ -3,6 +3,7 @@
 
 #include "ActCharacter.h"
 
+#include "ActAttributeComponent.h"
 #include "ActInteractionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -25,6 +26,8 @@ AActCharacter::AActCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	InteractionComp = CreateDefaultSubobject<UActInteractionComponent>("InteractionComponent");
+
+	AttributeComp = CreateDefaultSubobject<UActAttributeComponent>("AttributeComp");
 
 	bUseControllerRotationYaw = false;
 }
