@@ -6,6 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "DrawDebugHelpers.h"
+#include "ActAttributeComponent.h"
+#include <ActAttributeComponent.cpp>
 
 // Sets default values
 AActExplosiveBarrel::AActExplosiveBarrel()
