@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ActMagicProjectile.h"
+#include "ActProjectileBase.h"
 #include "ActPhysicsProjectile.generated.h"
 
 class URadialForceComponent;
 
 UCLASS()
-class ACTIONROGUELIKE_API AActPhysicsProjectile : public AActMagicProjectile
+class ACTIONROGUELIKE_API AActPhysicsProjectile : public AActProjectileBase
 {
 	GENERATED_BODY()
 	

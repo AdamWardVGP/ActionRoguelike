@@ -3,6 +3,7 @@
 
 #include "ActPhysicsProjectile.h"
 
+#include "ActAttributeComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values
@@ -14,11 +15,9 @@ AActPhysicsProjectile::AActPhysicsProjectile()
 
 	ForceComp = CreateDefaultSubobject<URadialForceComponent>("ForceComponent");
 	ForceComp->SetupAttachment(RootComponent);
-	ForceComp->ForceStrength = -10000.f;
-	ForceComp->Radius = 2000.f;
-	ForceComp->bIgnoreOwningActor = true;
+	ForceComp->ForceStrength = -1000000.f;
+	ForceComp->Radius = 150.f;
 
 	ForceComp->RemoveObjectTypeToAffect(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	ForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
-

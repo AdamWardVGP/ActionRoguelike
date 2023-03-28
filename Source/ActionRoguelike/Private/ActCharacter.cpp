@@ -138,7 +138,7 @@ void AActCharacter::LaunchProjectileTowardCrosshair(TSubclassOf<AActor> Projecti
 
 	FVector CameraLocation = CameraComp->K2_GetComponentLocation();
 	FRotator CameraRotation = CameraComp->K2_GetComponentRotation();
-	FVector TraceEnd = CameraLocation + (CameraRotation.Vector() * 1000.f);
+	FVector TraceEnd = CameraLocation + (CameraRotation.Vector() * 5000.f);
 
 	TArray<FHitResult> Hits;
 	FCollisionObjectQueryParams QueryParams;
