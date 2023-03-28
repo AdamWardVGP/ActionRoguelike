@@ -44,6 +44,6 @@ public:
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsAlive();
+	bool IsAlive() const;
 		
 };

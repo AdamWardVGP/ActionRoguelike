@@ -32,6 +32,12 @@ AActCharacter::AActCharacter()
 	bUseControllerRotationYaw = false;
 }
 
+void AActCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComp->OnHealthChanged.AddDynamic(this, &AActCharacter::OnHealthChanged);
+}
+
 // Called when the game starts or when spawned
 void AActCharacter::BeginPlay()
 {
@@ -171,5 +177,15 @@ void AActCharacter::LaunchProjectileTowardCrosshair(TSubclassOf<AActor> Projecti
 void AActCharacter::PrimaryInteract()
 {
 	InteractionComp->PrimaryInteract();
+}
+
+void AActCharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComponent* OwningComp, float NewHealth,
+	float Delta)
+{
+	if (NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		DisableInput(PlayerController);
+	}
 }
 
