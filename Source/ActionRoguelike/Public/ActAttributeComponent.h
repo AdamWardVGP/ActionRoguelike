@@ -42,5 +42,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAlive();
 		
 };

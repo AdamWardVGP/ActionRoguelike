@@ -14,6 +14,10 @@ class ACTIONROGUELIKE_API AActMagicProjectile : public AActProjectileBase
 {
 	GENERATED_BODY()
 
-	//Base class uses BlueprintNative event, must override the _Implementation rather than Explode()
-	virtual void Explode_Implementation() override;
+protected:
+	void PostInitializeComponents();
+	UFUNCTION()
+	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 };

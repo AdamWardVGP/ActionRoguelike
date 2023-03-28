@@ -19,3 +19,8 @@ bool UActAttributeComponent::ApplyHealthChange(float Delta)
 	return true;
 }
 
+bool UActAttributeComponent::IsAlive()
+{
+	return Health > 0.0f;
+}
+
