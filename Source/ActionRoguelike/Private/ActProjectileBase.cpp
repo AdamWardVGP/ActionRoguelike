@@ -4,6 +4,7 @@
 #include "ActProjectileBase.h"
 
 #include "ActAttributeComponent.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -26,6 +27,9 @@ AActProjectileBase::AActProjectileBase()
 	MovementComponent->InitialSpeed = 1000.0f;
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
+
+	InFlightAudioCue = CreateDefaultSubobject<UAudioComponent>("InFlightAudio");
+	ImpactAudioCue = CreateDefaultSubobject<UAudioComponent>("ImpactAudio");
 }
 
 void AActProjectileBase::PostInitializeComponents()
@@ -35,14 +39,45 @@ void AActProjectileBase::PostInitializeComponents()
 	SphereComp->OnComponentHit.AddDynamic(this, &AActProjectileBase::OnActorHit);
 }
 
+void AActProjectileBase::BeginPlay()
+{
+	Super::BeginPlay();
+	if (ensure(InFlightAudioCue))
+	{
+		InFlightAudioCue->Play(0);
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		if (ensure(InFlightAudioCue))
+		{
+			UGameplayStatics::PlaySoundAtLocation(World, InFlightAudioCue->GetSound(), GetActorLocation(), GetActorRotation());
+		}
+	}
+}
+
 void AActProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+                                    UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Explode();
 }
 
 void AActProjectileBase::Explode_Implementation()
 {
+	if (ensure(InFlightAudioCue))
+	{
+		InFlightAudioCue->Stop();
+	}
+
+	if(const UWorld* World = GetWorld())
+	{
+		if(ensure(ImpactAudioCue))
+		{
+			UGameplayStatics::PlaySoundAtLocation(World, ImpactAudioCue->GetSound(), GetActorLocation(), GetActorRotation());
+		}
+	}
+
+
 	if(ensure(!IsPendingKill()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());

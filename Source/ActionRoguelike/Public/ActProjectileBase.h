@@ -34,6 +34,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystemComponent* EffectComp;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UAudioComponent* InFlightAudioCue;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UAudioComponent* ImpactAudioCue;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactVFX;
 
@@ -41,4 +47,6 @@ protected:
 	void Explode();
 
 	virtual void PostInitializeComponents() override;
+
+	virtual void BeginPlay() override;
 };

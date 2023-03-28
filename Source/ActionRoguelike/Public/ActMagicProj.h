@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "ActProjectileBase.h"
-#include "ActMagicProjectile.generated.h"
+#include "ActMagicProj.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API AActMagicProjectile : public AActProjectileBase
+class ACTIONROGUELIKE_API AActMagicProj : public AActProjectileBase
 {
 	GENERATED_BODY()
 
