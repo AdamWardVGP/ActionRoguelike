@@ -38,5 +38,3 @@ void AActPowerupBase::OnRespawn()
 		MeshComponent->SetVisibility(true);
 	}
 }
-
-
