@@ -6,13 +6,13 @@
 UActAttributeComponent::UActAttributeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	Health = 100.f;
+	MaxHealth = 100.f;
+	Health = MaxHealth;
 }
 
 bool UActAttributeComponent::ApplyHealthChange(float Delta)
 {
-	Health += Delta;
+	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 

@@ -182,10 +182,17 @@ void AActCharacter::PrimaryInteract()
 void AActCharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComponent* OwningComp, float NewHealth,
 	float Delta)
 {
-	if (NewHealth <= 0.0f && Delta < 0.0f)
+	if(Delta <0.0f)
 	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		DisableInput(PlayerController);
+		
+		if (NewHealth <= 0.0f)
+		{
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			DisableInput(PlayerController);
+		} else
+		{
+			GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+		}
 	}
 }
 
