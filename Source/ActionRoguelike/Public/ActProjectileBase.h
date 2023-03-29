@@ -32,6 +32,9 @@ protected:
 	UProjectileMovementComponent* MovementComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UParticleSystemComponent* CastingComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystemComponent* EffectComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -42,6 +45,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactVFX;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UCameraShakeSourceComponent* CameraShakeComponent;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();

@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Camera/CameraShakeSourceComponent.h"
 
 // Sets default values
 AActProjectileBase::AActProjectileBase()
@@ -23,13 +24,21 @@ AActProjectileBase::AActProjectileBase()
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(SphereComp);
 
+	CastingComponent = CreateDefaultSubobject<UParticleSystemComponent>("CastingComp");
+	CastingComponent->SetupAttachment(SphereComp);
+
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjMoveComp");
 	MovementComponent->InitialSpeed = 1000.0f;
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
 
 	InFlightAudioCue = CreateDefaultSubobject<UAudioComponent>("InFlightAudio");
+	InFlightAudioCue->SetupAttachment(SphereComp);
+
 	ImpactAudioCue = CreateDefaultSubobject<UAudioComponent>("ImpactAudio");
+
+	CameraShakeComponent = CreateDefaultSubobject<UCameraShakeSourceComponent>("CameraComp");
+	CameraShakeComponent->SetupAttachment(SphereComp);
 }
 
 void AActProjectileBase::PostInitializeComponents()
@@ -45,14 +54,6 @@ void AActProjectileBase::BeginPlay()
 	if (ensure(InFlightAudioCue))
 	{
 		InFlightAudioCue->Play(0);
-	}
-
-	if (const UWorld* World = GetWorld())
-	{
-		if (ensure(InFlightAudioCue))
-		{
-			UGameplayStatics::PlaySoundAtLocation(World, InFlightAudioCue->GetSound(), GetActorLocation(), GetActorRotation());
-		}
 	}
 }
 
@@ -75,6 +76,8 @@ void AActProjectileBase::Explode_Implementation()
 		{
 			UGameplayStatics::PlaySoundAtLocation(World, ImpactAudioCue->GetSound(), GetActorLocation(), GetActorRotation());
 		}
+
+		UGameplayStatics::PlayWorldCameraShake(World, CameraShakeComponent->CameraShake, GetActorLocation(), 10000.f, 1000000.f);
 	}
 
 

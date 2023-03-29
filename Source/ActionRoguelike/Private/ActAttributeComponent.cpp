@@ -24,3 +24,9 @@ bool UActAttributeComponent::IsAlive() const
 	return Health > 0.0f;
 }
 
+bool UActAttributeComponent::IsAtMaxHealth() const
+{
+	return Health == MaxHealth;
+}
+
+
