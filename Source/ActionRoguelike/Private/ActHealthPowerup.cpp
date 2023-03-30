@@ -9,13 +9,12 @@ void AActHealthPowerup::Interact_Implementation(APawn* InstigatorPawn)
 {
 	if(InstigatorPawn)
 	{
-
 		UActAttributeComponent* InstigatorAttributes = 
 			Cast<UActAttributeComponent>(InstigatorPawn->GetComponentByClass(UActAttributeComponent::StaticClass()));
 
 		if(InstigatorAttributes && !InstigatorAttributes->IsAtMaxHealth())
 		{
-			Super::OnPickup();
+			OnPickup();
 			InstigatorAttributes->ApplyHealthChange(100.f);
 		}
 	}

@@ -3,7 +3,6 @@
 
 #include "AI/ActAIController.h"
 
-#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void AActAIController::BeginPlay()

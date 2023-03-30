@@ -25,7 +25,7 @@ void AActPowerupBase::OnPickup()
 {
 	if (ensure(MeshComponent))
 	{
-		MeshComponent->SetVisibility(false);
+		MeshComponent->SetVisibility(false, true);
 	}
 
 	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, this, &AActPowerupBase::OnRespawn, RespawnDelay);
@@ -35,6 +35,6 @@ void AActPowerupBase::OnRespawn()
 {
 	if(ensure(MeshComponent))
 	{
-		MeshComponent->SetVisibility(true);
+		MeshComponent->SetVisibility(true, true);
 	}
 }
