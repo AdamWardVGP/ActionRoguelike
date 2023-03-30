@@ -3,20 +3,33 @@
 
 #include "AI/ActAICharacter.h"
 
+#include "AIController.h"
+#include "Perception/PawnSensingComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "DrawDebugHelpers.h"
+
 AActAICharacter::AActAICharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
+
 }
 
-void AActAICharacter::BeginPlay()
+void AActAICharacter::PostInitializeComponents()
 {
-	Super::BeginPlay();
-	
+	Super::PostInitializeComponents();
+	PawnSensingComponent->OnSeePawn.AddDynamic(this, &AActAICharacter::OnPawnSeen);
 }
 
-void AActAICharacter::Tick(float DeltaTime)
+void AActAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	Super::Tick(DeltaTime);
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if(AIC)
+	{
+		UBlackboardComponent* BlackboardComp = AIC->GetBlackboardComponent();
+		BlackboardComp->SetValueAsObject("TargetActor", Pawn);
 
+		DrawDebugString(GetWorld(), GetActorLocation(), "Player Spotted", nullptr, FColor::White, 4.f, true);
+	}
 }
