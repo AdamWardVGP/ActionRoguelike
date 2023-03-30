@@ -9,5 +9,9 @@
 void AActAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	RunBehaviorTree(BehaviorTree);
+
+	if(ensureMsgf(BehaviorTree, TEXT("Behavior tree is nullptr! please assign BehaviorTree in your AI Controller.")))
+	{
+		RunBehaviorTree(BehaviorTree);
+	}
 }
