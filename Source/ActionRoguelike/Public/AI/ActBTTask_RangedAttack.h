@@ -14,7 +14,13 @@ class ACTIONROGUELIKE_API UActBTTask_RangedAttack : public UBTTaskNode
 {
 	GENERATED_BODY()
 
+public:
+	UActBTTask_RangedAttack();
+
 protected:
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	float MaxBulletSpread;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	FBlackboardKeySelector TargetActorKey;

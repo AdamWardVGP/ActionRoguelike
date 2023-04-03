@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static UActAttributeComponent* GetAttributes(AActor* FromActor);
 
+	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
+	static bool IsActorAlive(AActor* FromActor);
+
 protected:
 
 	// EditAnywhere - Edit in BP editor and per-instanc ein level
