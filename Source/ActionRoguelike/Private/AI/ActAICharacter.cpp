@@ -4,6 +4,7 @@
 #include "AI/ActAICharacter.h"
 
 #include "ActAttributeComponent.h"
+#include "ActWorldUserWidget.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "Perception/PawnSensingComponent.h"
@@ -11,6 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "AI/ActAIController.h"
 #include "BrainComponent.h"
+#include "Blueprint/UserWidget.h"
 
 AActAICharacter::AActAICharacter()
 {
@@ -54,6 +56,16 @@ void AActAICharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComp
 		if(InstigatorActor != this)
 		{
 			setTargetActor(InstigatorActor);
+		}
+
+		if(ActiveHealthBar == nullptr)
+		{
+			ActiveHealthBar = CreateWidget<UActWorldUserWidget>(GetWorld(), HealthbarWidgetClass);
+			ActiveHealthBar->AttachedActor = this;
+			if (ActiveHealthBar)
+			{
+				ActiveHealthBar->AddToViewport();
+			}
 		}
 
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
