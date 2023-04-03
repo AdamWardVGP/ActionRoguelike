@@ -22,6 +22,7 @@ AActAICharacter::AActAICharacter()
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	TimeToHitParamName = "TimeToHit";
 }
 
 void AActAICharacter::PostInitializeComponents()
@@ -54,6 +55,8 @@ void AActAICharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComp
 		{
 			setTargetActor(InstigatorActor);
 		}
+
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 
 		if(NewHealth <= 0.0f)
 		{

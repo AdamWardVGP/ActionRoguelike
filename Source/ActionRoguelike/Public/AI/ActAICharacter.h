@@ -19,6 +19,9 @@ public:
 
 protected:
 
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	FName TimeToHitParamName;
+
 	void setTargetActor(AActor* NewTarget);
 
 	virtual	void PostInitializeComponents() override;

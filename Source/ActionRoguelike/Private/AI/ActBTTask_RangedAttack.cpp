@@ -11,7 +11,7 @@
 
 UActBTTask_RangedAttack::UActBTTask_RangedAttack()
 {
-	MaxBulletSpread = 2.0f;
+	MaxBulletSpread = 3.0f;
 }
 
 EBTNodeResult::Type UActBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
