@@ -18,6 +18,9 @@ public:
 	// Sets default values for this component's properties
 	UActAttributeComponent();
 
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static UActAttributeComponent* GetAttributes(AActor* FromActor);
+
 protected:
 
 	// EditAnywhere - Edit in BP editor and per-instanc ein level
@@ -37,7 +40,7 @@ protected:
 	float MaxHealth;
 
 
-	// HealthMax, Stamina, Strength
+	// Stamina, Strength
 
 public:	
 

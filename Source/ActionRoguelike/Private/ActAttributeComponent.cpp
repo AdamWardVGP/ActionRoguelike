@@ -10,6 +10,26 @@ UActAttributeComponent::UActAttributeComponent()
 	Health = MaxHealth;
 }
 
+UActAttributeComponent* UActAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if(FromActor)
+	{
+		return Cast<UActAttributeComponent>(FromActor->GetComponentByClass(UActAttributeComponent::StaticClass()));
+	}
+
+	return nullptr;
+}
+
+bool UActAttributeComponent::IsActorAlive(AActor* FromActor)
+{
+	if(UActAttributeComponent* ActAttributeComponent = GetAttributes(FromActor))
+	{
+		return ActAttributeComponent->IsAlive();
+	}
+
+	return false;
+}
+
 bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 

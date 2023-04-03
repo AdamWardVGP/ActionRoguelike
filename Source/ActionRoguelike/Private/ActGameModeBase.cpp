@@ -30,14 +30,10 @@ void AActGameModeBase::SpawnBotTimerElapsed()
 	for (TActorIterator<AActAICharacter> It(GetWorld()); It; ++It)
 	{
 		AActAICharacter* Bot = *It;
-
-		if (UActAttributeComponent* BotAttrs = Cast<UActAttributeComponent>(
-			Bot->GetComponentByClass(UActAttributeComponent::StaticClass())))
+		UActAttributeComponent* BotAttrs = UActAttributeComponent::GetAttributes(Bot);
+		if (ensure(BotAttrs) && BotAttrs->IsAlive())
 		{
-			if (ensure(BotAttrs) && BotAttrs->IsAlive())
-			{
-				NumOfAliveBots++;
-			}
+			NumOfAliveBots++;
 		}
 	}
 
