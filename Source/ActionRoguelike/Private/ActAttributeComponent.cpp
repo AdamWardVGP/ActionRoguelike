@@ -30,6 +30,16 @@ bool UActAttributeComponent::IsActorAlive(AActor* FromActor)
 	return false;
 }
 
+bool UActAttributeComponent::IsLowHealth(AActor* FromActor, float ThresholdPercent)
+{
+	if (UActAttributeComponent* ActAttributeComponent = GetAttributes(FromActor))
+	{
+		return (ActAttributeComponent->Health / ActAttributeComponent->MaxHealth) <= ThresholdPercent;
+	}
+
+	return false;
+}
+
 bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 
@@ -42,6 +52,11 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
 
 	return ActualDelta != 0;
+}
+
+float UActAttributeComponent::GetMaxHealth()
+{
+	return MaxHealth;
 }
 
 bool UActAttributeComponent::IsAlive() const

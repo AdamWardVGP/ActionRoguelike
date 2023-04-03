@@ -24,6 +24,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
 	static bool IsActorAlive(AActor* FromActor);
 
+	/**
+	 * Determines if an actor's health is "low" based on a percentage of it's overall health.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static bool IsLowHealth(AActor* FromActor, float ThresholdPercent);
+
 protected:
 
 	// EditAnywhere - Edit in BP editor and per-instanc ein level
@@ -49,6 +55,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMaxHealth();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;

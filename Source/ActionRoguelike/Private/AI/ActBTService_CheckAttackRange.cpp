@@ -16,7 +16,7 @@ void UActBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp,
 	if(ensure(BlackboardComponent))
 	{
 		//TODO Move "targetactor" to a const value
-		AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject("TargetActor"));
+		AActor* TargetActor = Cast<AActor>(BlackboardComponent->GetValueAsObject(TargetActorKey.SelectedKeyName));
 		if(TargetActor)
 		{
 			AAIController* MyController = OwnerComp.GetAIOwner();
