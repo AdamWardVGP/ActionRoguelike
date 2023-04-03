@@ -7,6 +7,7 @@
 #include "EngineUtils.h"
 #include "AI/ActAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "DrawDebugHelpers.h"
 
 AActGameModeBase::AActGameModeBase()
 {
@@ -25,9 +26,6 @@ void AActGameModeBase::StartPlay()
 void AActGameModeBase::SpawnBotTimerElapsed()
 {
 	//I personally don't like this approach of iterating to find all the bots, we should auto-register them somewhere.
-	//I've relocated the calculation to occur here as I'm unsure of the efficency of EQS queries, we wont waste time
-	//doing the query if we aren't even going to spawn them.
-
 	int32 NumOfAliveBots = 0;
 	for (TActorIterator<AActAICharacter> It(GetWorld()); It; ++It)
 	{
@@ -36,12 +34,14 @@ void AActGameModeBase::SpawnBotTimerElapsed()
 		if (UActAttributeComponent* BotAttrs = Cast<UActAttributeComponent>(
 			Bot->GetComponentByClass(UActAttributeComponent::StaticClass())))
 		{
-			if (BotAttrs->IsAlive())
+			if (ensure(BotAttrs) && BotAttrs->IsAlive())
 			{
 				NumOfAliveBots++;
 			}
 		}
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("At maximum bot capacity. Skipping bot spawn."))
 
 	float MaxBotCount = 10.f;
 
@@ -53,6 +53,7 @@ void AActGameModeBase::SpawnBotTimerElapsed()
 
 	if (NumOfAliveBots >= MaxBotCount)
 	{
+		UE_LOG(LogTemp, Log, TEXT("At maximum bot capacity. Skipping bot spawn."))
 		return;
 	}
 
@@ -82,6 +83,8 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 		AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator, SpawnParams);
+
+		DrawDebugSphere(GetWorld(), Locations[0], 50.f, 20, FColor::Blue, false, 60.0f);
 		//UE_LOG(LogTemp, Warning, TEXT("Actor spawned: %p"), SpawnActor);
 	}
 }

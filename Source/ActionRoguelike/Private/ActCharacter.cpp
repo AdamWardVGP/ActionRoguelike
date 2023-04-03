@@ -38,19 +38,6 @@ void AActCharacter::PostInitializeComponents()
 	AttributeComp->OnHealthChanged.AddDynamic(this, &AActCharacter::OnHealthChanged);
 }
 
-// Called when the game starts or when spawned
-void AActCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AActCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 // Called to bind functionality to input
 void AActCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

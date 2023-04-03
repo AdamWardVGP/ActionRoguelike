@@ -7,6 +7,7 @@
 #include "ActAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class UActAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActAICharacter : public ACharacter
@@ -25,5 +26,12 @@ protected:
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UActAttributeComponent* AttributeComp;
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, UActAttributeComponent* OwningComp, float NewHealth, float Delta);
+
 
 };

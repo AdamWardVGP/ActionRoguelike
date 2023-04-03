@@ -28,7 +28,7 @@ AActProjectileBase::AActProjectileBase()
 	CastingComponent->SetupAttachment(SphereComp);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjMoveComp");
-	MovementComponent->InitialSpeed = 1000.0f;
+	MovementComponent->InitialSpeed = 1800.0f;
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
 

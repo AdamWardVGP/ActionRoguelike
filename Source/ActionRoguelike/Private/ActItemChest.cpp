@@ -19,21 +19,6 @@ AActItemChest::AActItemChest()
 	TargetPitch = 110.f;
 }
 
-// Called when the game starts or when spawned
-void AActItemChest::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AActItemChest::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-
 void AActItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	LidComp->SetRelativeRotation(FRotator(TargetPitch, 0.f, 0.f));

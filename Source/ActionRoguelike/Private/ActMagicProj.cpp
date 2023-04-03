@@ -5,6 +5,12 @@
 #include "Components/SphereComponent.h"
 #include "ActAttributeComponent.h"
 
+
+AActMagicProj::AActMagicProj()
+{
+	ProjectileDamage = 20.f;
+}
+
 void AActMagicProj::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -28,8 +34,7 @@ void AActMagicProj::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 		if (AttributeComponent)
 		{
-			AttributeComponent->ApplyHealthChange(-20.f);
-
+			AttributeComponent->ApplyHealthChange(-1 * ProjectileDamage);
 		}
 	}
 }
