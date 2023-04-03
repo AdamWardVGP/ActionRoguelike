@@ -34,7 +34,7 @@ void AActMagicProj::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 		if (AttributeComponent)
 		{
-			AttributeComponent->ApplyHealthChange(-1 * ProjectileDamage);
+			AttributeComponent->ApplyHealthChange(GetInstigator(), -1 * ProjectileDamage);
 		}
 	}
 }

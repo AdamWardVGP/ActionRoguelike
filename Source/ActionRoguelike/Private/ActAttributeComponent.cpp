@@ -10,7 +10,7 @@ UActAttributeComponent::UActAttributeComponent()
 	Health = MaxHealth;
 }
 
-bool UActAttributeComponent::ApplyHealthChange(float Delta)
+bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 
 	float OldHealth = Health;

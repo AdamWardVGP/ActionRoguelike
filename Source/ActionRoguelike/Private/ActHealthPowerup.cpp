@@ -15,7 +15,7 @@ void AActHealthPowerup::Interact_Implementation(APawn* InstigatorPawn)
 		if(InstigatorAttributes && !InstigatorAttributes->IsAtMaxHealth())
 		{
 			OnPickup();
-			InstigatorAttributes->ApplyHealthChange(100.f);
+			InstigatorAttributes->ApplyHealthChange(this, 100.f);
 		}
 	}
 }
