@@ -5,6 +5,8 @@
 #include "DrawDebugHelpers.h"
 #include "ActGameplayInterface.h"
 
+static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("act.InteractionDebugDraw"), false, TEXT("Enable debug geometry for interaction components"), ECVF_Cheat);
+
 // Sets default values for this component's properties
 UActInteractionComponent::UActInteractionComponent()
 {
@@ -42,24 +44,30 @@ void UActInteractionComponent::PrimaryInteract()
 
 	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 
+	bool debugEnabled = CVarDebugDrawInteraction.GetValueOnGameThread();
+
 	for (FHitResult Hit: Hits)
 	{
 		if (AActor* HitActor = Hit.GetActor())
 		{
-			//FString ActorString = HitActor->GetActorNameOrLabel();
-			//UE_LOG(LogTemp, Warning, TEXT("Hit actor %s"), *ActorString);
 			if (HitActor->Implements<UActGameplayInterface>())
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("Actor implements UActGameplayInterface"));
 				APawn* MyPawn = Cast<APawn>(MyOwner);
 				IActGameplayInterface::Execute_Interact(HitActor, MyPawn);
+
+				if (debugEnabled)
+				{
+					DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, FColor::Green, false, 5.f, 0, 3.f);
+				}
+
 				break;
 			}
 		}
-		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, FColor::Green, false, 5.f, 0, 3.f);
 	}
 
-
-	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 5.f, 0, 3.f);
+	if(debugEnabled)
+	{
+		DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 5.f, 0, 3.f);
+	}
 
 }

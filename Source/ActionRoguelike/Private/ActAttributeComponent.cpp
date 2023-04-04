@@ -5,6 +5,9 @@
 
 #include "ActGameModeBase.h"
 
+
+static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("act.DamageMultiplier"), 1.0f, TEXT("Global damage modifier for Attribute Component."), ECVF_Cheat);
+
 UActAttributeComponent::UActAttributeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -51,6 +54,11 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 	}
 
 	float OldHealth = Health;
+
+	if(Delta < 0.0f)
+	{
+		Delta *= CVarDamageMultiplier.GetValueOnGameThread();
+	}
 
 	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);
 

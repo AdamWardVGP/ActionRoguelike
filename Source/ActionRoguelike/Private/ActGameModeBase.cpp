@@ -10,6 +10,8 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "DrawDebugHelpers.h"
 
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("act.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
+
 AActGameModeBase::AActGameModeBase()
 {
 	SpawnTimerInterval = 2.f;
@@ -26,6 +28,12 @@ void AActGameModeBase::StartPlay()
 
 void AActGameModeBase::SpawnBotTimerElapsed()
 {
+	if(!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bot spawning skipped via cvar 'CVarSpawnBots'"))
+		return;
+	}
+
 	int32 NumOfAliveBots = 0;
 	for (TActorIterator<AActAICharacter> It(GetWorld()); It; ++It)
 	{
