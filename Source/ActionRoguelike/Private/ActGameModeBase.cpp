@@ -4,6 +4,7 @@
 #include "ActGameModeBase.h"
 
 #include "ActAttributeComponent.h"
+#include "ActCharacter.h"
 #include "EngineUtils.h"
 #include "AI/ActAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
@@ -96,3 +97,34 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 		//UE_LOG(LogTemp, Warning, TEXT("Actor spawned: %p"), SpawnActor);
 	}
 }
+
+
+void AActGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	AActCharacter* PlayerCharacter = Cast<AActCharacter>(VictimActor);
+	if(PlayerCharacter)
+	{
+		FTimerHandle TimerHandle_RespawnDelay;
+
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerCharacter->GetController());
+
+
+		float RespawnDelay = 2.0f;
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+}
+
+void AActGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if(Controller)
+	{
+		//Removes character from the controller, it doesn't destroy it. But when we Restart we'll get a fresh player character
+		Controller->UnPossess();
+
+		RestartPlayer(Controller);
+	}
+}
+

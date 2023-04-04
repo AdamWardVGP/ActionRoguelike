@@ -44,8 +44,14 @@ protected:
 
 	FTimerHandle TimerHandle_SpawnBots;
 
+	UFUNCTION()
+	void RespawnPlayerElapsed(AController* Controller);
+
 public:
 
 	UFUNCTION(Exec)
 	void KillAllBots();
+
+	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
 };

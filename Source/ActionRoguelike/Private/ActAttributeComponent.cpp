@@ -3,6 +3,8 @@
 
 #include "ActAttributeComponent.h"
 
+#include "ActGameModeBase.h"
+
 UActAttributeComponent::UActAttributeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -55,6 +57,15 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 	float ActualDelta = Health - OldHealth;
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
+
+	if(ActualDelta <0.0f && Health == 0.0f)
+	{
+		AActGameModeBase* GM = GetWorld()->GetAuthGameMode<AActGameModeBase>();
+		if(GM)
+		{
+			GM->OnActorKilled(GetOwner(), InstigatorActor);
+		}
+	}
 
 	return ActualDelta != 0;
 }
