@@ -22,8 +22,7 @@ void UActWorldUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 
 	if(UGameplayStatics::ProjectWorldToScreen(GetOwningPlayer(), AttachedActor->GetActorLocation() + WorldOffset, ScreenPosition))
 	{
-		//Results from ProjectWorldToScreen still arent located properly in the viewport, we need to re-scale it to the correct position.
-
+		//Results from ProjectWorldToScreen still aren't located properly in the viewport, we need to re-scale it to the correct position.
 		float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
 		ScreenPosition /= ViewportScale;
 

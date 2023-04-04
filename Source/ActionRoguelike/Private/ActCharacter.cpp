@@ -183,3 +183,9 @@ void AActCharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeCompon
 	}
 }
 
+
+void AActCharacter::HealSelf(float Amount /* = 100 */)
+{
+	AttributeComp->ApplyHealthChange(this, Amount);
+}
+

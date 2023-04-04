@@ -25,7 +25,6 @@ void AActGameModeBase::StartPlay()
 
 void AActGameModeBase::SpawnBotTimerElapsed()
 {
-	//I personally don't like this approach of iterating to find all the bots, we should auto-register them somewhere.
 	int32 NumOfAliveBots = 0;
 	for (TActorIterator<AActAICharacter> It(GetWorld()); It; ++It)
 	{
@@ -62,8 +61,21 @@ void AActGameModeBase::SpawnBotTimerElapsed()
 	}
 }
 
+void AActGameModeBase::KillAllBots()
+{
+	for (TActorIterator<AActAICharacter> It(GetWorld()); It; ++It)
+	{
+		AActAICharacter* Bot = *It;
+		UActAttributeComponent* BotAttrs = UActAttributeComponent::GetAttributes(Bot);
+		if (ensure(BotAttrs) && BotAttrs->IsAlive())
+		{
+			BotAttrs->Kill(this); //Maybe pass in player for kill credit in the future?
+		}
+	}
+}
+
 void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
-	EEnvQueryStatus::Type QueryStatus)
+                                               EEnvQueryStatus::Type QueryStatus)
 {
 	if(QueryStatus != EEnvQueryStatus::Success)
 	{

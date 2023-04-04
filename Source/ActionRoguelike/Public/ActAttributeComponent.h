@@ -67,5 +67,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAtMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool Kill(AActor* InstigatorActor);
 		
 };

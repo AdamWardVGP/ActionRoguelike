@@ -43,6 +43,11 @@ bool UActAttributeComponent::IsLowHealth(AActor* FromActor, float ThresholdPerce
 bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 
+	if(!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+
 	float OldHealth = Health;
 
 	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);
@@ -67,6 +72,11 @@ bool UActAttributeComponent::IsAlive() const
 bool UActAttributeComponent::IsAtMaxHealth() const
 {
 	return Health == MaxHealth;
+}
+
+bool UActAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	return ApplyHealthChange(InstigatorActor, -1 * GetMaxHealth());
 }
 
 

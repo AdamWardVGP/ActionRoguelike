@@ -43,4 +43,9 @@ protected:
 	void SpawnBotTimerElapsed();
 
 	FTimerHandle TimerHandle_SpawnBots;
+
+public:
+
+	UFUNCTION(Exec)
+	void KillAllBots();
 };

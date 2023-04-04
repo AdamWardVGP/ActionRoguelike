@@ -91,4 +91,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//Exec marks as a console command
+	UFUNCTION(Exec)
+	void HealSelf(float Amount = 100);
+
 };
