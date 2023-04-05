@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UActInteractionComponent;
 class UAnimMontage;
 class UActAttributeComponent;
+class UActActionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActCharacter : public ACharacter
@@ -78,8 +79,15 @@ protected:
 
 	void PrimaryInteract();
 
+	void SprintStart();
+
+	void SprintStop();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UActAttributeComponent* AttributeComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UActActionComponent* ActionComp;
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, UActAttributeComponent* OwningComp, float NewHealth, float Delta);

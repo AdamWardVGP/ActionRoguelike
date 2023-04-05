@@ -3,6 +3,7 @@
 
 #include "ActCharacter.h"
 
+#include "ActActionComponent.h"
 #include "ActAttributeComponent.h"
 #include "ActInteractionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -31,6 +32,8 @@ AActCharacter::AActCharacter()
 
 	AttributeComp = CreateDefaultSubobject<UActAttributeComponent>("AttributeComp");
 
+	ActionComp = CreateDefaultSubobject<UActActionComponent>("ActionComp");
+
 	bUseControllerRotationYaw = false;
 }
 
@@ -58,6 +61,9 @@ void AActCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AActCharacter::Jump);
 
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &AActCharacter::PrimaryInteract);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AActCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AActCharacter::SprintStop);
 }
 
 void AActCharacter::MoveForward(float Value)
@@ -189,8 +195,18 @@ void AActCharacter::PrimaryInteract()
 	InteractionComp->PrimaryInteract();
 }
 
+void AActCharacter::SprintStart()
+{
+	ActionComp->StartActionByName(this, "Sprint");
+}
+
+void AActCharacter::SprintStop()
+{
+	ActionComp->StopActionByName(this, "Sprint");
+}
+
 void AActCharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComponent* OwningComp, float NewHealth,
-	float Delta)
+                                    float Delta)
 {
 	if(Delta <0.0f)
 	{
