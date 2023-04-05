@@ -9,6 +9,7 @@ AActPowerupBase::AActPowerupBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	SetRootComponent(MeshComponent);
 
 	InteractionComponent = CreateDefaultSubobject<UActInteractionComponent>("InteractionComponent");
@@ -27,6 +28,7 @@ void AActPowerupBase::OnPickup()
 	if (ensure(MeshComponent))
 	{
 		MeshComponent->SetVisibility(false, true);
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, this, &AActPowerupBase::OnRespawn, RespawnDelay);
@@ -37,5 +39,6 @@ void AActPowerupBase::OnRespawn()
 	if(ensure(MeshComponent))
 	{
 		MeshComponent->SetVisibility(true, true);
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	}
 }

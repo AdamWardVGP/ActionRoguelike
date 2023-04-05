@@ -178,12 +178,12 @@ void AActGameModeBase::OnSpawnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWr
 			if(i % 4 == 0)
 			{
 				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(CreditPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
-				DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Orange, false, 60.0f);
+				//DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Orange, false, 60.0f);
 			}
 			else if (i % 7 == 0)
 			{
 				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(HealthPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
-				DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Cyan, false, 60.0f);
+				//DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Cyan, false, 60.0f);
 			}
 		}
 	}
