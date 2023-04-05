@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float RespawnDelay;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float CreditCost;
+
 	UFUNCTION()
 	void OnPickup();
 

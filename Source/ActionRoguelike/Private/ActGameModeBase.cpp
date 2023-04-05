@@ -5,6 +5,7 @@
 
 #include "ActAttributeComponent.h"
 #include "ActCharacter.h"
+#include "ActPlayerState.h"
 #include "EngineUtils.h"
 #include "AI/ActAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
@@ -109,17 +110,23 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 
 void AActGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
-	AActCharacter* PlayerCharacter = Cast<AActCharacter>(VictimActor);
-	if(PlayerCharacter)
+	if(AActCharacter* PlayerCharacterVictim = Cast<AActCharacter>(VictimActor))
 	{
 		FTimerHandle TimerHandle_RespawnDelay;
 
 		FTimerDelegate Delegate;
-		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerCharacter->GetController());
+		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerCharacterVictim->GetController());
 
 
 		float RespawnDelay = 2.0f;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+	} else if (AActAICharacter* BotCharacter = Cast<AActAICharacter>(VictimActor))
+	{
+		if(AActCharacter* PlayerCharacterKiller = Cast<AActCharacter>(Killer))
+		{
+			AActPlayerState* PlayerState = Cast<AActPlayerState>(PlayerCharacterKiller->GetPlayerState());
+			PlayerState->ModifyCredits(this, 20);
+		}
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));

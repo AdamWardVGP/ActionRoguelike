@@ -15,4 +15,7 @@ class ACTIONROGUELIKE_API AActHealthPowerup : public AActPowerupBase
 	GENERATED_BODY()
 
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+
+public:
+	AActHealthPowerup();
 };

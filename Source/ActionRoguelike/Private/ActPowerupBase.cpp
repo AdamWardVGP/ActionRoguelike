@@ -14,6 +14,7 @@ AActPowerupBase::AActPowerupBase()
 	InteractionComponent = CreateDefaultSubobject<UActInteractionComponent>("InteractionComponent");
 
 	RespawnDelay = 5.f;
+	CreditCost = 10.f;
 }
 
 void AActPowerupBase::Interact_Implementation(APawn* InstigatorPawn)
