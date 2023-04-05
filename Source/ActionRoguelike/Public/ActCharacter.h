@@ -24,46 +24,6 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
-	void PrimaryAttack();
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> PrimaryProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	FTimerHandle TimerHandle_PrimaryAttack;
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void PrimaryAttack_TimeElapsed();
-
-
-	void SecondaryAttack();
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> SecondaryProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	FTimerHandle TimerHandle_SecondaryAttack;
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SecondaryAttack_TimeElapsed();
-
-	void UltAttack();
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> UltProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	FTimerHandle TimerHandle_UltAttack;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void UltAttack_TimeElapsed();
-
-	void LaunchProjectileTowardCrosshair(TSubclassOf<AActor> Projectile);
-
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USpringArmComponent* SpringArmComp;
 
@@ -82,6 +42,12 @@ protected:
 	void SprintStart();
 
 	void SprintStop();
+
+	void PrimaryAttack();
+
+	void SecondaryAttack();
+
+	void UltAttack();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UActAttributeComponent* AttributeComp;

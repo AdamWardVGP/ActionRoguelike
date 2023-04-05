@@ -89,106 +89,18 @@ void AActCharacter::MoveRight(float Value)
 
 void AActCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	//TODO change this to an animation event, for now we'll use a timer.
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AActCharacter::PrimaryAttack_TimeElapsed, 0.2f);
-}
-
-void AActCharacter::PrimaryAttack_TimeElapsed_Implementation()
-{
-	// ensure() is an unreal equivalent macro for "try" or assert. it will only throw the first time and lets you continue afterward
-	// ensureAlways() can trigger it every time if you want to be more intrusive
-	// ensure() also doesn't get included in packaged builds.
-	// check() can be used too, but it will halt the entire execution if it's hit and you cant proceed.
-	if(ensure(PrimaryProjectileClass))
-	{
-		LaunchProjectileTowardCrosshair(PrimaryProjectileClass);
-	}
+	ActionComp->StartActionByName(this, "PrimaryAttack");
 }
 
 void AActCharacter::SecondaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	//TODO change this to an animation event, for now we'll use a timer.
-	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &AActCharacter::SecondaryAttack_TimeElapsed, 0.2f);
-}
-
-void AActCharacter::SecondaryAttack_TimeElapsed_Implementation()
-{
-	LaunchProjectileTowardCrosshair(SecondaryProjectileClass);
+	ActionComp->StartActionByName(this, "SecondaryAttack");
 }
 
 void AActCharacter::UltAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	//TODO change this to an animation event, for now we'll use a timer.
-	GetWorldTimerManager().SetTimer(TimerHandle_UltAttack, this, &AActCharacter::UltAttack_TimeElapsed, 0.2f);
+	ActionComp->StartActionByName(this, "UltAttack");
 }
-
-void AActCharacter::UltAttack_TimeElapsed_Implementation()
-{
-	LaunchProjectileTowardCrosshair(UltProjectileClass);
-}
-
-void AActCharacter::LaunchProjectileTowardCrosshair(TSubclassOf<AActor> Projectile)
-{
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FVector CameraLocation = CameraComp->K2_GetComponentLocation();
-	FRotator CameraRotation = CameraComp->K2_GetComponentRotation();
-	FVector TraceEnd = CameraLocation + (CameraRotation.Vector() * 5000.f);
-
-	TArray<FHitResult> Hits;
-	FCollisionObjectQueryParams QueryParams;
-	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-	QueryParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-
-	GetWorld()->LineTraceMultiByObjectType(Hits, CameraLocation, TraceEnd, QueryParams);
-
-	float Radius = 30.f;
-	//Sweep will instead scan across the vector with the given shape
-	FCollisionShape Shape;
-	Shape.SetSphere(Radius);
-
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, CameraLocation, TraceEnd, FQuat::Identity, QueryParams, Shape);
-
-	bool debugEnabled = CVarDebugDrawCharacter.GetValueOnGameThread();
-
-	FVector Target;
-	if (!Hits.IsEmpty())
-	{
-		Target = Hits[0].ImpactPoint;
-
-		if (debugEnabled)
-		{
-			DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Green, false, 5.f, 0, 3.f);
-			DrawDebugSphere(GetWorld(), Target, Radius, 32, FColor::Green, false, 5.f, 0, 3.f);
-		}
-
-	}
-	else
-	{
-		Target = TraceEnd;
-
-		if (debugEnabled)
-		{
-			DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 5.f, 0, 3.f);
-		}
-	}
-
-	FRotator ProjectileRot = UKismetMathLibrary::FindLookAtRotation(HandLocation, Target);
-
-	FTransform SpawnTM = FTransform(ProjectileRot, HandLocation);
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	GetWorld()->SpawnActor<AActor>(Projectile, SpawnTM, SpawnParams);
-}
-
 
 void AActCharacter::PrimaryInteract()
 {
