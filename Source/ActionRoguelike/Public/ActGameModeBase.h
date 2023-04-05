@@ -20,6 +20,7 @@ public:
 
 	AActGameModeBase();
 
+
 	virtual void StartPlay() override;
 
 protected:
@@ -46,6 +47,22 @@ protected:
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	UEnvQuery* SpawnPowerupQuery;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	TSubclassOf<AActor> HealthPickup;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
+	TSubclassOf<AActor> CreditPickup;
+
+	UFUNCTION()
+	void OnSpawnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void SpawnPickups();
 
 public:
 

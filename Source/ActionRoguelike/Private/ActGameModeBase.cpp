@@ -22,6 +22,8 @@ void AActGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 
+	SpawnPickups();
+
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, 
 		&AActGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
@@ -102,7 +104,7 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 
 		AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator, SpawnParams);
 
-		DrawDebugSphere(GetWorld(), Locations[0], 50.f, 20, FColor::Blue, false, 60.0f);
+		//DrawDebugSphere(GetWorld(), Locations[0], 50.f, 20, FColor::Blue, false, 60.0f);
 		//UE_LOG(LogTemp, Warning, TEXT("Actor spawned: %p"), SpawnActor);
 	}
 }
@@ -140,6 +142,50 @@ void AActGameModeBase::RespawnPlayerElapsed(AController* Controller)
 		Controller->UnPossess();
 
 		RestartPlayer(Controller);
+	}
+}
+
+void AActGameModeBase::SpawnPickups()
+{
+	UEnvQueryInstanceBlueprintWrapper* QueryInst = UEnvQueryManager::RunEQSQuery(
+		this, SpawnPowerupQuery, this, EEnvQueryRunMode::AllMatching, nullptr);
+
+	if (ensure(QueryInst))
+	{
+		QueryInst->GetOnQueryFinishedEvent().AddDynamic(this, &AActGameModeBase::OnSpawnPowerupQueryCompleted);
+	}
+}
+
+
+void AActGameModeBase::OnSpawnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
+	EEnvQueryStatus::Type QueryStatus)
+{
+	if (QueryStatus != EEnvQueryStatus::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spawn powerup EQS Query Failed"));
+		return;
+	}
+
+	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
+
+	if (Locations.Num() > 0)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		for(int i = 0; i < Locations.Num(); i++)
+		{
+			if(i % 4 == 0)
+			{
+				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(CreditPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
+				DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Orange, false, 60.0f);
+			}
+			else if (i % 7 == 0)
+			{
+				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(HealthPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
+				DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Cyan, false, 60.0f);
+			}
+		}
 	}
 }
 
