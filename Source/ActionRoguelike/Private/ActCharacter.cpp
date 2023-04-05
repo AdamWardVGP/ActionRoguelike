@@ -212,3 +212,8 @@ void AActCharacter::HealSelf(float Amount /* = 100 */)
 	AttributeComp->ApplyHealthChange(this, Amount);
 }
 
+FVector AActCharacter::GetPawnViewLocation() const
+{
+	return CameraComp->K2_GetComponentLocation();
+}
+

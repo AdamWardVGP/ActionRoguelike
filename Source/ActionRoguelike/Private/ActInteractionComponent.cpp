@@ -27,6 +27,8 @@ void UActInteractionComponent::PrimaryInteract()
 	FRotator EyeRotator;
 	GetOwner()->GetActorEyesViewPoint(EyeLocation, EyeRotator);
 
+
+
 	const FVector End = EyeLocation + (EyeRotator.Vector() * 1000.f);
 
 	//This is essentially a raycast, so may be difficult for activating smaller objects

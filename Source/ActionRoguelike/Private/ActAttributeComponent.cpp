@@ -48,7 +48,7 @@ bool UActAttributeComponent::IsLowHealth(AActor* FromActor, float ThresholdPerce
 bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 
-	if(!GetOwner()->CanBeDamaged())
+	if(!GetOwner()->CanBeDamaged() && Delta < 0.0f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Ignoring damage, god mode is enabled"))
 		return false;

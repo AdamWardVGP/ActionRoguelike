@@ -14,6 +14,7 @@
 #include "BrainComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AActAICharacter::AActAICharacter()
 {
@@ -74,6 +75,7 @@ void AActAICharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComp
 
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 
+		//died
 		if(NewHealth <= 0.0f)
 		{
 			//Stop BT
@@ -86,6 +88,9 @@ void AActAICharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeComp
 			//Ragdoll
 			GetMesh()->SetAllBodiesSimulatePhysics(true);
 			GetMesh()->SetCollisionProfileName("Ragdoll");
+
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			GetCharacterMovement()->DisableMovement();
 
 			//Set lifespan
 			SetLifeSpan(10.0f);
