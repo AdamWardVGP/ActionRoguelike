@@ -4,6 +4,7 @@
 #include "ActMagicProj.h"
 #include "Components/SphereComponent.h"
 #include "ActAttributeComponent.h"
+#include "ActGameplayFunctionLibrary.h"
 
 
 AActMagicProj::AActMagicProj()
@@ -23,18 +24,13 @@ void AActMagicProj::PostInitializeComponents()
 void AActMagicProj::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, Instigator: %s"), *GetNameSafe(OtherActor), *GetNameSafe(GetInstigator()));
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Calling explode"));
-		Explode();
-
-		UActAttributeComponent* AttributeComponent =
-			Cast<UActAttributeComponent>(OtherActor->GetComponentByClass(UActAttributeComponent::StaticClass()));
-
-		if (AttributeComponent)
+		UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, Instigator: %s"), *GetNameSafe(OtherActor), *GetNameSafe(GetInstigator()));
+		if(UActGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
 		{
-			AttributeComponent->ApplyHealthChange(GetInstigator(), -1 * ProjectileDamage);
+			UE_LOG(LogTemp, Warning, TEXT("Calling explode"));
+			Explode();
 		}
 	}
 }

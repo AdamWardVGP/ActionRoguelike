@@ -50,6 +50,7 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 
 	if(!GetOwner()->CanBeDamaged())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Ignoring damage, god mode is enabled"))
 		return false;
 	}
 

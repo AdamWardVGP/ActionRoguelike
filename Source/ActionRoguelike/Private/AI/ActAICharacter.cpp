@@ -13,6 +13,7 @@
 #include "AI/ActAIController.h"
 #include "BrainComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CapsuleComponent.h"
 
 AActAICharacter::AActAICharacter()
 {
@@ -25,6 +26,9 @@ AActAICharacter::AActAICharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	TimeToHitParamName = "TimeToHit";
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 void AActAICharacter::PostInitializeComponents()

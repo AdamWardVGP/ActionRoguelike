@@ -10,6 +10,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+static TAutoConsoleVariable<bool> CVarDebugDrawCharacter(TEXT("act.CharacterDebugDraw"), false, TEXT("Enable debug geometry for character attacks"), ECVF_Cheat);
+
 // Sets default values
 AActCharacter::AActCharacter()
 {
@@ -140,14 +142,35 @@ void AActCharacter::LaunchProjectileTowardCrosshair(TSubclassOf<AActor> Projecti
 
 	GetWorld()->LineTraceMultiByObjectType(Hits, CameraLocation, TraceEnd, QueryParams);
 
+	float Radius = 30.f;
+	//Sweep will instead scan across the vector with the given shape
+	FCollisionShape Shape;
+	Shape.SetSphere(Radius);
+
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, CameraLocation, TraceEnd, FQuat::Identity, QueryParams, Shape);
+
+	bool debugEnabled = CVarDebugDrawCharacter.GetValueOnGameThread();
+
 	FVector Target;
 	if (!Hits.IsEmpty())
 	{
 		Target = Hits[0].ImpactPoint;
+
+		if (debugEnabled)
+		{
+			DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Green, false, 5.f, 0, 3.f);
+			DrawDebugSphere(GetWorld(), Target, Radius, 32, FColor::Green, false, 5.f, 0, 3.f);
+		}
+
 	}
 	else
 	{
 		Target = TraceEnd;
+
+		if (debugEnabled)
+		{
+			DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 5.f, 0, 3.f);
+		}
 	}
 
 	FRotator ProjectileRot = UKismetMathLibrary::FindLookAtRotation(HandLocation, Target);
