@@ -2,9 +2,12 @@
 
 
 #include "ActMagicProj.h"
+
+#include "ActActionComponent.h"
 #include "Components/SphereComponent.h"
 #include "ActAttributeComponent.h"
 #include "ActGameplayFunctionLibrary.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 
 AActMagicProj::AActMagicProj()
@@ -26,6 +29,16 @@ void AActMagicProj::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if (OtherActor && OtherActor != GetInstigator())
 	{
+
+		UActActionComponent* ActionComp = Cast<UActActionComponent>(OtherActor->GetComponentByClass(UActActionComponent::StaticClass()));
+		if(ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			MovementComponent->Velocity = -MovementComponent->Velocity;
+			SetInstigator(Cast<APawn>(OtherActor));
+			return;
+		}
+
+
 		UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, Instigator: %s"), *GetNameSafe(OtherActor), *GetNameSafe(GetInstigator()));
 		if(UActGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
 		{

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ActProjectileBase.h"
+#include "GameplayTagContainer.h"
 #include "ActMagicProj.generated.h"
 
 /**
@@ -25,4 +26,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	float ProjectileDamage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	FGameplayTag ParryTag;
 };

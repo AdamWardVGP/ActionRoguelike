@@ -8,6 +8,7 @@
 
 class UPawnSensingComponent;
 class UActAttributeComponent;
+class UActActionComponent;
 class UUserWidget;
 class UActWorldUserWidget;
 
@@ -20,6 +21,9 @@ public:
 	AActAICharacter();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UActActionComponent* ActionComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;

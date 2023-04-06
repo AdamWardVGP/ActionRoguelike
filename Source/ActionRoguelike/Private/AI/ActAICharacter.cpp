@@ -3,15 +3,14 @@
 
 #include "AI/ActAICharacter.h"
 
+#include "ActActionComponent.h"
 #include "ActAttributeComponent.h"
 #include "ActWorldUserWidget.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "Perception/PawnSensingComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "DrawDebugHelpers.h"
 #include "AI/ActAIController.h"
-#include "BrainComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -30,6 +29,8 @@ AActAICharacter::AActAICharacter()
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
+
+	ActionComp = CreateDefaultSubobject<UActActionComponent>("ActionComponent");
 }
 
 void AActAICharacter::PostInitializeComponents()
