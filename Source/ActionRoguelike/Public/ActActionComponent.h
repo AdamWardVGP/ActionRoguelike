@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "ActActionComponent.generated.h"
 
@@ -17,6 +18,9 @@ class ACTIONROGUELIKE_API UActActionComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UActActionComponent();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer ActiveGameplayTags;
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void AddAction(TSubclassOf<UActAction> ActionClass);
