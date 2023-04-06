@@ -4,17 +4,23 @@
 #include "ActPowerupBase.h"
 
 #include "ActInteractionComponent.h"
+#include "Components/SphereComponent.h"
 
 AActPowerupBase::AActPowerupBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
+	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+	RootComponent = SphereComp;
+
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
-	SetRootComponent(MeshComponent);
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MeshComponent->SetupAttachment(RootComponent);
 
 	InteractionComponent = CreateDefaultSubobject<UActInteractionComponent>("InteractionComponent");
 
-	RespawnDelay = 5.f;
+	RespawnDelay = 10.f;
 	CreditCost = 10.f;
 }
 
@@ -28,7 +34,7 @@ void AActPowerupBase::OnPickup()
 	if (ensure(MeshComponent))
 	{
 		MeshComponent->SetVisibility(false, true);
-		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, this, &AActPowerupBase::OnRespawn, RespawnDelay);
@@ -39,6 +45,6 @@ void AActPowerupBase::OnRespawn()
 	if(ensure(MeshComponent))
 	{
 		MeshComponent->SetVisibility(true, true);
-		MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
+		SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);
 	}
 }

@@ -171,18 +171,20 @@ void AActGameModeBase::OnSpawnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWr
 	if (Locations.Num() > 0)
 	{
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		for(int i = 0; i < Locations.Num(); i++)
 		{
-			if(i % 4 == 0)
+			if(i % 17 == 0)
 			{
 				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(CreditPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
+				UE_LOG(LogTemp, Warning, TEXT("Pup spawn: %ls"), *GetNameSafe(SpawnActor))
 				//DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Orange, false, 60.0f);
 			}
-			else if (i % 7 == 0)
+			else if (i % 21 == 0)
 			{
 				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(HealthPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
+				UE_LOG(LogTemp, Warning, TEXT("Pup spawn: %ls"), *GetNameSafe(SpawnActor))
 				//DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Cyan, false, 60.0f);
 			}
 		}

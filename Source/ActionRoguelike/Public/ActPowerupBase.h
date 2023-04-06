@@ -8,6 +8,7 @@
 #include "ActPowerupBase.generated.h"
 
 class UActInteractionComponent;
+class USphereComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActPowerupBase : public AActor, public IActGameplayInterface
@@ -24,6 +25,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USphereComponent* SphereComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UActInteractionComponent* InteractionComponent;
