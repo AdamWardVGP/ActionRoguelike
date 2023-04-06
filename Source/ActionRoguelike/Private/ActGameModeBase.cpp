@@ -178,13 +178,13 @@ void AActGameModeBase::OnSpawnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWr
 			if(i % 17 == 0)
 			{
 				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(CreditPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
-				UE_LOG(LogTemp, Warning, TEXT("Pup spawn: %ls"), *GetNameSafe(SpawnActor))
+				//UE_LOG(LogTemp, Warning, TEXT("Pup spawn: %ls"), *GetNameSafe(SpawnActor))
 				//DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Orange, false, 60.0f);
 			}
 			else if (i % 21 == 0)
 			{
 				AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(HealthPickup, Locations[i], FRotator::ZeroRotator, SpawnParams);
-				UE_LOG(LogTemp, Warning, TEXT("Pup spawn: %ls"), *GetNameSafe(SpawnActor))
+				//UE_LOG(LogTemp, Warning, TEXT("Pup spawn: %ls"), *GetNameSafe(SpawnActor))
 				//DrawDebugSphere(GetWorld(), Locations[i], 50.f, 20, FColor::Cyan, false, 60.0f);
 			}
 		}
