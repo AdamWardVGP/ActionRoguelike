@@ -16,7 +16,7 @@ void UActActionComponent::BeginPlay()
 	Super::BeginPlay();
 	for(TSubclassOf<UActAction> ActionClass: DefaultActions)
 	{
-		AddAction(ActionClass);
+		AddAction(GetOwner(), ActionClass);
 	}
 }
 
@@ -28,7 +28,7 @@ void UActActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
 }
 
-void UActActionComponent::AddAction(TSubclassOf<UActAction> ActionClass)
+void UActActionComponent::AddAction(AActor* Instigator, TSubclassOf<UActAction> ActionClass)
 {
 	if (!ensure(ActionClass))
 	{
@@ -39,6 +39,11 @@ void UActActionComponent::AddAction(TSubclassOf<UActAction> ActionClass)
 	if(ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+
+		if(NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
+		{
+			NewAction->StartAction(Instigator);
+		}
 	}
 }
 
@@ -76,4 +81,19 @@ bool UActActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	}
 
 	return false;
+}
+
+void UActActionComponent::RemoveAction(UActAction* ActActionEffect)
+{
+	if (!ensure(ActActionEffect && !ActActionEffect->IsRunning()))
+	{
+		return;
+	}
+
+	if(!Actions.Contains(ActActionEffect))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Action effect %s requested removal but was not present on %s"), *GetNameSafe(ActActionEffect), *GetNameSafe(GetOwner()))
+	}
+
+	Actions.Remove(ActActionEffect);
 }

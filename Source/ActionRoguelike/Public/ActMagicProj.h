@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "ActMagicProj.generated.h"
 
+class UActActionEffect;
+
 /**
  * 
  */
@@ -29,4 +31,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	FGameplayTag ParryTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<UActActionEffect> HitTriggeredActionEffect;
 };

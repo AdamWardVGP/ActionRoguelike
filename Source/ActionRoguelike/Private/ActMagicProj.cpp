@@ -5,9 +5,9 @@
 
 #include "ActActionComponent.h"
 #include "Components/SphereComponent.h"
-#include "ActAttributeComponent.h"
 #include "ActGameplayFunctionLibrary.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "ActActionEffect.h"
 
 
 AActMagicProj::AActMagicProj()
@@ -44,6 +44,11 @@ void AActMagicProj::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Calling explode"));
 			Explode();
+
+			if(ActionComp)
+			{
+				ActionComp->AddAction(GetInstigator(), HitTriggeredActionEffect);
+			}
 		}
 	}
 }
