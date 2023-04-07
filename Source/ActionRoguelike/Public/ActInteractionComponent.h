@@ -22,6 +22,13 @@ public:
 
 protected:
 
+	//Reliable - will always arrive eventually. Request will be re-sent unless an ack was returned
+	//Unreliable - not guaranteed. Packet can get lost and won't retry
+	//
+	//TCP vs UDP?
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
+
 	void FindBestInteractable();
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

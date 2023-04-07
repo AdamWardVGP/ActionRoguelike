@@ -20,13 +20,19 @@ UActInteractionComponent::UActInteractionComponent()
 	CollisionChannel = ECollisionChannel::ECC_WorldDynamic;
 }
 
+
 void UActInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
+                                             FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//Could do this less frequently than every frame with a timer
-	FindBestInteractable();
+	//Ensure only if we're on the machine considered the owner of the pawn should we run this block
+	APawn* MyPawn = Cast<APawn>(GetOwner());
+	if(MyPawn->IsLocallyControlled())
+	{
+		//Could do this less frequently than every frame with a timer
+		FindBestInteractable();
+	}
 }
 
 void UActInteractionComponent::FindBestInteractable()
@@ -109,12 +115,17 @@ void UActInteractionComponent::FindBestInteractable()
 
 void UActInteractionComponent::PrimaryInteract()
 {
-	if(FocusedActor == nullptr)
+	ServerInteract(FocusedActor);
+}
+
+void UActInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
+{
+	if (InFocus == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "No Focus Actor to interact.");
 		return;
 	}
 
 	APawn* MyPawn = Cast<APawn>(GetOwner());
-	IActGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+	IActGameplayInterface::Execute_Interact(InFocus, MyPawn);
 }
