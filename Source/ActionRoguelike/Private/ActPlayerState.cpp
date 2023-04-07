@@ -5,7 +5,7 @@
 
 bool AActPlayerState::ModifyCredits(AActor* ModifySource, float Amount)
 {
-	if(Amount < 0.f && Amount > Credits)
+	if(Amount < 0.f && FMath::Abs(Amount) > Credits)
 	{
 		//Purchase attempt failed
 		return false;

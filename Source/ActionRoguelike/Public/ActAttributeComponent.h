@@ -7,6 +7,7 @@
 #include "ActAttributeComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, UActAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnRageChanged, AActor*, InstigatorActor, UActAttributeComponent*, OwningComp, float, NewRage, float, Delta);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -21,6 +22,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static UActAttributeComponent* GetAttributes(AActor* FromActor);
 
+#pragma region Health
+	
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attrributes")
+	float Health;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attrributes")
+	float MaxHealth;
+
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
 	static bool IsActorAlive(AActor* FromActor);
 
@@ -30,34 +43,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static bool IsLowHealth(AActor* FromActor, float ThresholdPercent);
 
-protected:
-
-	// EditAnywhere - Edit in BP editor and per-instanc ein level
-	// VisibleAnywhere - 'read-only' in editor and level. (Use for Components)
-	// EditDefaultsOnly - Hide variable per instance, edit in BP editor only
-	// VisibleDefaultsOnly - 'read only' access for variable, only in BP editor (uncommon)
-	// EditInstanceOnly - Allow only editing of an instance (i.e. only when placed in a level)
-	// --
-	// BlueprintReadOnly - Only appears in blueprint for read (does not show up in instance detail panel)
-	// BlueprintReadWrite - Appears in blueprint for read and write
-	// --
-	// Category - Friendly way to sort properties under a shared dropdown in the blueprint and instance detail panels.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attrributes")
-	float Health;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attrributes")
-	float MaxHealth;
-
-
-	// Stamina, Strength
-
-public:	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMaxHealth();
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
-
-	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	float GetMaxHealth();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
@@ -70,5 +60,23 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool Kill(AActor* InstigatorActor);
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attrributes")
+	float Rage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attrributes")
+	float MaxRage;
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMaxRage();
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool ApplyRageChange(AActor* InstigatorActor, float Delta);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRageChanged OnRageChanged;
 		
 };

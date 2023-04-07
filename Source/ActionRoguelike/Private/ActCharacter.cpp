@@ -122,6 +122,8 @@ void AActCharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeCompon
 {
 	if(Delta <0.0f)
 	{
+
+		AttributeComp->ApplyRageChange(this, -1 * Delta);
 		
 		if (NewHealth <= 0.0f)
 		{

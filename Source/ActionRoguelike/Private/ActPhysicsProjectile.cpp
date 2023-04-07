@@ -3,7 +3,6 @@
 
 #include "ActPhysicsProjectile.h"
 
-#include "ActAttributeComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values

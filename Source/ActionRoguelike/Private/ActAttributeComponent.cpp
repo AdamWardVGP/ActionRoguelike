@@ -13,6 +13,9 @@ UActAttributeComponent::UActAttributeComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	MaxHealth = 100.f;
 	Health = MaxHealth;
+
+	Rage = 0.0f;
+	MaxRage = 100.0f;
 }
 
 UActAttributeComponent* UActAttributeComponent::GetAttributes(AActor* FromActor)
@@ -65,7 +68,7 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 
 	float ActualDelta = Health - OldHealth;
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, ActualDelta);
+	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
 
 	if(ActualDelta <0.0f && Health == 0.0f)
 	{
@@ -97,6 +100,25 @@ bool UActAttributeComponent::IsAtMaxHealth() const
 bool UActAttributeComponent::Kill(AActor* InstigatorActor)
 {
 	return ApplyHealthChange(InstigatorActor, -1 * GetMaxHealth());
+}
+
+float UActAttributeComponent::GetMaxRage()
+{
+	return MaxRage;
+}
+
+bool UActAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
+{
+	const float OldRage = Rage;
+	Rage = FMath::Clamp(Rage + Delta, 0, MaxRage);
+	const float ActualDelta = Rage - OldRage;
+
+	if (ActualDelta != 0.0f)
+	{
+		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+	}
+
+	return ActualDelta != 0;
 }
 
 
