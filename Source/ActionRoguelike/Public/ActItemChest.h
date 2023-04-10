@@ -20,6 +20,17 @@ public:
 	// Sets default values for this actor's properties
 	AActItemChest();
 
+
+protected:
+
+	//Replicated - changes the property on other clients but doesn't tr
+	//ReplicatedUsing - allows us to listen to property changes ("RepNotify" in blueprint)
+	UPROPERTY(ReplicatedUsing = "OnRep_LidOpened")
+	bool bLidOpened;
+
+	UFUNCTION()
+	void OnRep_LidOpened();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidComp;
 

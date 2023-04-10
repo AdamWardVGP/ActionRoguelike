@@ -3,6 +3,7 @@
 
 #include "ActItemChest.h"
 #include "Components/StaticMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AActItemChest::AActItemChest()
@@ -17,10 +18,28 @@ AActItemChest::AActItemChest()
 	LidComp->SetupAttachment(ContainerComp);
 
 	TargetPitch = 110.f;
+
+	SetReplicates(true);
 }
 
 void AActItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
-	LidComp->SetRelativeRotation(FRotator(TargetPitch, 0.f, 0.f));
+	bLidOpened = !bLidOpened;
+	//Interact is happening on the server, and RepNotify only updates clients
+	//Server will need to update itself.
+	OnRep_LidOpened();
 }
 
+void AActItemChest::OnRep_LidOpened()
+{
+	const float CurrentPitch = bLidOpened ? TargetPitch : 0.f;
+	LidComp->SetRelativeRotation(FRotator(CurrentPitch, 0.f, 0.f));
+}
+
+void AActItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//Always send to all clients whenever changed on the server.
+	DOREPLIFETIME(AActItemChest, bLidOpened);
+}

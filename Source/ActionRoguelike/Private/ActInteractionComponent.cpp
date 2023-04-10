@@ -28,7 +28,7 @@ void UActInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	//Ensure only if we're on the machine considered the owner of the pawn should we run this block
 	APawn* MyPawn = Cast<APawn>(GetOwner());
-	if(MyPawn->IsLocallyControlled())
+	if(MyPawn && MyPawn->IsLocallyControlled())
 	{
 		//Could do this less frequently than every frame with a timer
 		FindBestInteractable();
