@@ -8,6 +8,7 @@ UActActionComponent::UActActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -60,6 +61,15 @@ bool UActActionComponent::StartActionByName(AActor* Instigator, FName ActionName
 				continue;
 			}
 
+			//If Client call server RPC.
+			//Server (authority) will replicate to ther clients
+			if(!GetOwner()->HasAuthority())
+			{
+				ServerStartAction(Instigator, ActionName);
+			}
+
+			//By starting actions ourselves immediately there's no delay to wait for server to receive
+			//And then transmit the action back to us.
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -96,4 +106,9 @@ void UActActionComponent::RemoveAction(UActAction* ActActionEffect)
 	}
 
 	Actions.Remove(ActActionEffect);
+}
+
+void UActActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartActionByName(Instigator, ActionName);
 }

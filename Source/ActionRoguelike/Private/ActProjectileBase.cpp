@@ -39,6 +39,8 @@ AActProjectileBase::AActProjectileBase()
 
 	CameraShakeComponent = CreateDefaultSubobject<UCameraShakeSourceComponent>("CameraComp");
 	CameraShakeComponent->SetupAttachment(SphereComp);
+
+	SetReplicates(true);
 }
 
 void AActProjectileBase::PostInitializeComponents()
