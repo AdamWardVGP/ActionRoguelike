@@ -5,6 +5,7 @@
 
 #include "ActAttributeComponent.h"
 #include "ActCharacter.h"
+#include "ActGameplayFunctionLibrary.h"
 
 UActThornsActionEffect::UActThornsActionEffect()
 {
@@ -47,12 +48,12 @@ void UActThornsActionEffect::StopAction_Implementation(AActor* Instigator)
 void UActThornsActionEffect::OnHealthChanged(AActor* InstigatorActor, UActAttributeComponent* OwningComp, float NewHealth,
 	float Delta)
 {
-	UActAttributeComponent* AttributeComponent = Cast<UActAttributeComponent>(InstigatorActor->GetComponentByClass(UActAttributeComponent::StaticClass()));
-	if(AttributeComponent)
+	AActor* OwningActor = GetOwningComponent()->GetOwner();
+
+	if(Delta > 0.0f || OwningActor == InstigatorActor)
 	{
-		//Could be worthwhile to add additional fields other than Instigator. We don't want infinite recursion
-		//of thorns triggering thorns.
-		//Disabled temporarily, we're encountering the anticipated issue now that we're trying to add networking.
-		//AttributeComponent->ApplyHealthChange(InstigatorActor, -1 * ThornsDamage);
+		return;
 	}
+
+	//UActGameplayFunctionLibrary::ApplyDamage(OwningActor, InstigatorActor, ThornsDamage);
 }

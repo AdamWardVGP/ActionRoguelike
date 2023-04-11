@@ -11,7 +11,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "DrawDebugHelpers.h"
 
-static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("act.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("act.SpawnBots"), false, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
 AActGameModeBase::AActGameModeBase()
 {
