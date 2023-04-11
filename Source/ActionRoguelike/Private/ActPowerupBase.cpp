@@ -22,6 +22,9 @@ AActPowerupBase::AActPowerupBase()
 
 	RespawnDelay = 10.f;
 	CreditCost = 10.f;
+
+	//if server spawns the actor then it will tell the client to spawn that actor too
+	SetReplicates(true);
 }
 
 void AActPowerupBase::Interact_Implementation(APawn* InstigatorPawn)

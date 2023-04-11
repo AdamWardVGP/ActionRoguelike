@@ -4,6 +4,7 @@
 #include "ActAttributeComponent.h"
 
 #include "ActGameModeBase.h"
+#include "Net/UnrealNetwork.h"
 
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("act.DamageMultiplier"), 1.0f, TEXT("Global damage modifier for Attribute Component."), ECVF_Cheat);
@@ -16,6 +17,9 @@ UActAttributeComponent::UActAttributeComponent()
 
 	Rage = 0.0f;
 	MaxRage = 100.0f;
+
+	//When setting bReplicates Unreal prefers this method if setting it in the constructor
+	SetIsReplicatedByDefault(true);
 }
 
 UActAttributeComponent* UActAttributeComponent::GetAttributes(AActor* FromActor)
@@ -68,7 +72,14 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 
 	float ActualDelta = Health - OldHealth;
 
-	OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
+	if(ActualDelta != 0.0f)
+	{
+
+		//if called by a client this just calls locally, when called from the server
+		//it will be broadcast to all clients
+		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+	}
 
 	if(ActualDelta <0.0f && Health == 0.0f)
 	{
@@ -119,6 +130,19 @@ bool UActAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delt
 	}
 
 	return ActualDelta != 0;
+}
+
+void UActAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
+{
+	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
+void UActAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UActAttributeComponent, Health);
+	DOREPLIFETIME(UActAttributeComponent, MaxHealth);
 }
 
 

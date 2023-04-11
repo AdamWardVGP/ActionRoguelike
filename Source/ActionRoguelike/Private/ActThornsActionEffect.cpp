@@ -52,6 +52,7 @@ void UActThornsActionEffect::OnHealthChanged(AActor* InstigatorActor, UActAttrib
 	{
 		//Could be worthwhile to add additional fields other than Instigator. We don't want infinite recursion
 		//of thorns triggering thorns.
-		AttributeComponent->ApplyHealthChange(InstigatorActor, -1 * ThornsDamage);
+		//Disabled temporarily, we're encountering the anticipated issue now that we're trying to add networking.
+		//AttributeComponent->ApplyHealthChange(InstigatorActor, -1 * ThornsDamage);
 	}
 }
