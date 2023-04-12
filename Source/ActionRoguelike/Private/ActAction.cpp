@@ -4,6 +4,12 @@
 #include "ActAction.h"
 #include "ActActionComponent.h"
 #include "ActionRoguelike/ActionRoguelike.h"
+#include "Net/UnrealNetwork.h"
+
+void UActAction::Initialize(UActActionComponent* NewActionComp)
+{
+	OwnerActionComponent = NewActionComp;
+}
 
 void UActAction::StartAction_Implementation(AActor* Instigator)
 {
@@ -19,7 +25,7 @@ void UActAction::StartAction_Implementation(AActor* Instigator)
 void UActAction::StopAction_Implementation(AActor* Instigator)
 {
 
-	ensureAlways(bIsRunning);
+	//ensureAlways(bIsRunning);
 
 	//UE_LOG(LogTemp, Log, TEXT("Stopping: %s"), *GetNameSafe(this))
 	LogOnScreen(this, FString::Printf(TEXT("Stopping: %s"), *ActionName.ToString()), FColor::White);
@@ -33,10 +39,10 @@ void UActAction::StopAction_Implementation(AActor* Instigator)
 UWorld* UActAction::GetWorld() const
 {
 	//Outer is set when creating actions via NewObject<T>
-	UActorComponent* Comp = Cast<UActorComponent>(GetOuter());
-	if(Comp)
+	AActor* Actor = Cast<AActor>(GetOuter());
+	if(Actor)
 	{
-		return Comp->GetWorld();
+		return Actor->GetWorld();
 	}
 
 	return nullptr;
@@ -44,7 +50,24 @@ UWorld* UActAction::GetWorld() const
 
 UActActionComponent* UActAction::GetOwningComponent() const
 {
-	return Cast<UActActionComponent>(GetOuter());
+	//This is an option but we don't want to iterate through components to find it every time we need this.
+	//AActor* Actor = Cast<AActor>(GetOuter());
+	//return Cast<UActActionComponent>(Actor->GetComponentByClass(UActActionComponent::StaticClass()));
+
+	return OwnerActionComponent;
+}
+
+void UActAction::OnRep_IsRunning()
+{
+	if(bIsRunning)
+	{
+		//TODO we'll need to pass around instigator
+		StartAction(nullptr);
+	}
+	else
+	{
+		StopAction(nullptr);
+	}
 }
 
 bool UActAction::IsRunning() const
@@ -61,4 +84,17 @@ bool UActAction::CanStart_Implementation(AActor* Instigator)
 
 	UActActionComponent* Comp = GetOwningComponent();
 	return !Comp->ActiveGameplayTags.HasAny(BlockedTags);
+}
+
+void UActAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty> & OutLifetimeProps ) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UActAction, bIsRunning);
+	DOREPLIFETIME(UActAction, OwnerActionComponent);
+}
+
+bool UActAction::IsSupportedForNetworking() const
+{
+	return true;
 }

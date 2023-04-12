@@ -20,6 +20,9 @@ class ACTIONROGUELIKE_API UActAction : public UObject
 
 protected:
 
+	UPROPERTY(Replicated)
+	UActActionComponent* OwnerActionComponent;
+
 	/* Tags automatically added to owning actor when activated, and removed when action ends */
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer GrantsTags;
@@ -31,9 +34,15 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	UActActionComponent* GetOwningComponent() const;
 
+	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
 	bool bIsRunning;
 
+	UFUNCTION()
+	void OnRep_IsRunning();
+
 public:
+
+	void Initialize(UActActionComponent* NewActionComp);
 
 	/* Immediately start when added to an action component */
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
@@ -56,5 +65,7 @@ public:
 	void StopAction(AActor* Instigator);
 
 	UWorld* GetWorld() const override;
+
+	virtual bool IsSupportedForNetworking() const override;
 
 };

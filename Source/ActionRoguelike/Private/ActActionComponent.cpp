@@ -4,6 +4,8 @@
 #include "ActActionComponent.h"
 #include "ActAction.h"
 #include "ActionRoguelike/ActionRoguelike.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
 
 UActActionComponent::UActActionComponent()
 {
@@ -16,9 +18,14 @@ UActActionComponent::UActActionComponent()
 void UActActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	for(TSubclassOf<UActAction> ActionClass: DefaultActions)
+
+	//Only let server set out actions
+	if(GetOwner()->HasAuthority())
 	{
-		AddAction(GetOwner(), ActionClass);
+		for (TSubclassOf<UActAction> ActionClass : DefaultActions)
+		{
+			AddAction(GetOwner(), ActionClass);
+		}
 	}
 }
 
@@ -36,7 +43,7 @@ void UActActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 			*GetNameSafe(GetOwner()),
 			*Action->ActionName.ToString(),
 			Action->IsRunning() ? TEXT("true") : TEXT("false"),
-			*GetNameSafe(GetOuter()));
+			*GetNameSafe(Action->GetOuter()));
 
 		LogOnScreen(this, ActionMsg, TextColor, 0.0f);
 	}
@@ -49,7 +56,9 @@ void UActActionComponent::AddAction(AActor* Instigator, TSubclassOf<UActAction> 
 		return;
 	}
 
-	UActAction* NewAction = NewObject<UActAction>(this, ActionClass);
+	UActAction* NewAction = NewObject<UActAction>(GetOwner(), ActionClass);
+	NewAction->Initialize(this);
+
 	if(ensure(NewAction))
 	{
 		Actions.Add(NewAction);
@@ -59,6 +68,21 @@ void UActActionComponent::AddAction(AActor* Instigator, TSubclassOf<UActAction> 
 			NewAction->StartAction(Instigator);
 		}
 	}
+}
+
+void UActActionComponent::RemoveAction(UActAction* ActActionEffect)
+{
+	if (!ensure(ActActionEffect && !ActActionEffect->IsRunning()))
+	{
+		return;
+	}
+
+	if (!Actions.Contains(ActActionEffect))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Action effect %s requested removal but was not present on %s"), *GetNameSafe(ActActionEffect), *GetNameSafe(GetOwner()))
+	}
+
+	Actions.Remove(ActActionEffect);
 }
 
 bool UActActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
@@ -74,8 +98,10 @@ bool UActActionComponent::StartActionByName(AActor* Instigator, FName ActionName
 				continue;
 			}
 
-			//If Client call server RPC.
-			//Server (authority) will replicate to ther clients
+			// !GetOwner()->HasAuthority() means caller is a client.
+			// Client calls Server RPC. (By convention Server RPC calls start with "Server<MethodName>" prefix
+			// Server will then execute the logic in the given Server<MethodName>_Implimentation method
+			// Server will still need to provide appropriate messaging back to clients to replicate the desired behavior
 			if(!GetOwner()->HasAuthority())
 			{
 				ServerStartAction(Instigator, ActionName);
@@ -106,22 +132,33 @@ bool UActActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	return false;
 }
 
-void UActActionComponent::RemoveAction(UActAction* ActActionEffect)
-{
-	if (!ensure(ActActionEffect && !ActActionEffect->IsRunning()))
-	{
-		return;
-	}
-
-	if(!Actions.Contains(ActActionEffect))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Action effect %s requested removal but was not present on %s"), *GetNameSafe(ActActionEffect), *GetNameSafe(GetOwner()))
-	}
-
-	Actions.Remove(ActActionEffect);
-}
-
 void UActActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartActionByName(Instigator, ActionName);
 }
+
+void UActActionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UActActionComponent, Actions);
+}
+
+bool UActActionComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	//When replicating unreal uses UActorChannel which can be thought of as the thread sending data between the server and client
+
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for(UActAction* Action : Actions)
+	{
+		if(Action)
+		{
+			WroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
+		}
+	}
+
+	//Notifies when changes in components occur so that the data can be replicated
+	return WroteSomething;
+
+}
+
