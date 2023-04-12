@@ -41,8 +41,14 @@ protected:
 	UFUNCTION()
 	void OnPickup();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastOnPickup();
+
 	UFUNCTION()
 	void OnRespawn();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastOnRespawn();
 
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 

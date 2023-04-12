@@ -34,18 +34,28 @@ void AActPowerupBase::Interact_Implementation(APawn* InstigatorPawn)
 
 void AActPowerupBase::OnPickup()
 {
+	MulticastOnPickup();
+
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, this, &AActPowerupBase::OnRespawn, RespawnDelay);
+}
+
+void AActPowerupBase::MulticastOnPickup_Implementation()
+{
 	if (ensure(MeshComponent))
 	{
 		MeshComponent->SetVisibility(false, true);
 		SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
-
-	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, this, &AActPowerupBase::OnRespawn, RespawnDelay);
 }
 
 void AActPowerupBase::OnRespawn()
 {
-	if(ensure(MeshComponent))
+	MulticastOnRespawn();
+}
+
+void AActPowerupBase::MulticastOnRespawn_Implementation()
+{
+	if (ensure(MeshComponent))
 	{
 		MeshComponent->SetVisibility(true, true);
 		SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryAndProbe);

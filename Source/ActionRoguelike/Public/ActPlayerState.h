@@ -7,7 +7,7 @@
 #include "ActPlayerState.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnCreditsChanged, AActor*, ModifySource, AActPlayerState*, OwnerPlayerState, float, NewCredits, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, AActPlayerState*, OwnerPlayerState, float, NewCredits, float, Delta);
 
 /**
  * 
@@ -17,11 +17,16 @@ class ACTIONROGUELIKE_API AActPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
+public:
+	AActPlayerState();
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly, Category = "PlayerState")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing="OnRep_Credits", Category = "PlayerState")
 	float Credits;
+
+	UFUNCTION()
+	void OnRep_Credits(float OldCredits);
 
 public:
 
@@ -33,5 +38,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCreditsChanged OnCreditsChanged;
+
+
 	
 };

@@ -126,10 +126,15 @@ bool UActAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delt
 
 	if (ActualDelta != 0.0f)
 	{
-		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+		MulticastRageChanged(InstigatorActor, Rage, Delta);
 	}
 
 	return ActualDelta != 0;
+}
+
+void UActAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
 }
 
 void UActAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
@@ -143,6 +148,8 @@ void UActAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 
 	DOREPLIFETIME(UActAttributeComponent, Health);
 	DOREPLIFETIME(UActAttributeComponent, MaxHealth);
+	DOREPLIFETIME(UActAttributeComponent, Rage);
+	DOREPLIFETIME(UActAttributeComponent, MaxRage);
 }
 
 
