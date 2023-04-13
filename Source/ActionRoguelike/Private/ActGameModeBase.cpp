@@ -6,16 +6,27 @@
 #include "ActAttributeComponent.h"
 #include "ActCharacter.h"
 #include "ActPlayerState.h"
+#include "ActSaveGame.h"
 #include "EngineUtils.h"
 #include "AI/ActAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
-#include "DrawDebugHelpers.h"
+#include "GameFramework/GameStateBase.h"
+#include "Kismet/GameplayStatics.h"
+
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("act.SpawnBots"), false, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
 AActGameModeBase::AActGameModeBase()
 {
 	SpawnTimerInterval = 2.f;
+	SlotName = "SaveGame1";
+}
+
+void AActGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	LoadSaveGame();
 }
 
 void AActGameModeBase::StartPlay()
@@ -28,6 +39,17 @@ void AActGameModeBase::StartPlay()
 		&AActGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
 
+void AActGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+
+	AActPlayerState* PlayerState = NewPlayer->GetPlayerState<AActPlayerState>();
+	if(PlayerState)
+	{
+		//this doesn't work with multiplayer, everyone loads the same state
+		PlayerState->LoadPlayerState(CurrentSaveGame);
+	}
+}
 
 void AActGameModeBase::SpawnBotTimerElapsed()
 {
@@ -191,3 +213,37 @@ void AActGameModeBase::OnSpawnPowerupQueryCompleted(UEnvQueryInstanceBlueprintWr
 	}
 }
 
+
+void AActGameModeBase::WriteSaveGame()
+{
+	for(int32 i = 0; i < GameState->PlayerArray.Num(); i++)
+	{
+		AActPlayerState* PS = Cast<AActPlayerState>(GameState->PlayerArray[i]);
+		if(PS)
+		{
+			PS->SavePlayerState(CurrentSaveGame);
+			break; //Single player only at this point
+		}
+	}
+
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
+}
+
+void AActGameModeBase::LoadSaveGame()
+{
+	if(UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<UActSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if(CurrentSaveGame == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data."))
+			return;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Loaded SaveGame Data."))
+	}
+	else
+	{
+		CurrentSaveGame = Cast<UActSaveGame>(UGameplayStatics::CreateSaveGameObject(UActSaveGame::StaticClass()));
+		UE_LOG(LogTemp, Warning, TEXT("Created new SaveGame Data."))
+	}
+}

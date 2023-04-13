@@ -10,6 +10,7 @@
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
+class UActSaveGame;
 
 UCLASS()
 class ACTIONROGUELIKE_API AActGameModeBase : public AGameModeBase
@@ -20,10 +21,18 @@ public:
 
 	AActGameModeBase();
 
+	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 	virtual void StartPlay() override;
 
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 protected:
+
+	FString SlotName;
+
+	UPROPERTY()
+	UActSaveGame* CurrentSaveGame;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimerInterval;
@@ -70,5 +79,10 @@ public:
 	void KillAllBots();
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
 
 };

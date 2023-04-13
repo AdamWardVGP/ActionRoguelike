@@ -6,8 +6,9 @@
 #include "GameFramework/PlayerState.h"
 #include "ActPlayerState.generated.h"
 
+class UActSaveGame;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, AActPlayerState*, OwnerPlayerState, float, NewCredits, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, AActPlayerState*, OwnerPlayerState, int32, NewCredits, int32, Delta);
 
 /**
  * 
@@ -23,22 +24,26 @@ public:
 protected:
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing="OnRep_Credits", Category = "PlayerState")
-	float Credits;
+	int32 Credits;
 
 	UFUNCTION()
-	void OnRep_Credits(float OldCredits);
+	void OnRep_Credits(int32 OldCredits);
 
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
-	bool ModifyCredits(AActor* ModifySource, float Amount);
+	bool ModifyCredits(AActor* ModifySource, int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
-	float GetCreditTotal() const;
+	int32 GetCreditTotal() const;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnCreditsChanged OnCreditsChanged;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(UActSaveGame* SaveObject);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(UActSaveGame* SaveObject);
 	
 };

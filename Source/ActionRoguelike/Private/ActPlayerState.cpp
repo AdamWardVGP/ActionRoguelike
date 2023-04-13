@@ -3,6 +3,7 @@
 
 #include "ActPlayerState.h"
 
+#include "ActSaveGame.h"
 #include "Net/UnrealNetwork.h"
 
 AActPlayerState::AActPlayerState()
@@ -10,7 +11,7 @@ AActPlayerState::AActPlayerState()
 
 }
 
-bool AActPlayerState::ModifyCredits(AActor* ModifySource, float Amount)
+bool AActPlayerState::ModifyCredits(AActor* ModifySource, int32 Amount)
 {
 	if(Amount < 0.f && FMath::Abs(Amount) > Credits)
 	{
@@ -30,17 +31,12 @@ bool AActPlayerState::ModifyCredits(AActor* ModifySource, float Amount)
 
 }
 
-//void AActPlayerState::MulticastCreditsChanged_Implementation(AActor* InstigatorActor, float NewCredits, float Delta)
-//{
-//	OnCreditsChanged.Broadcast(this, Credits, Credits - OldCredits);
-//}
-
-void AActPlayerState::OnRep_Credits(float OldCredits)
+void AActPlayerState::OnRep_Credits(int32 OldCredits)
 {
 	OnCreditsChanged.Broadcast(this, Credits, Credits - OldCredits);
 }
 
-float AActPlayerState::GetCreditTotal() const
+int32 AActPlayerState::GetCreditTotal() const
 {
 	return Credits;
 }
@@ -49,4 +45,21 @@ void AActPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AActPlayerState, Credits);
+}
+
+void AActPlayerState::LoadPlayerState_Implementation(UActSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		Credits = SaveObject->Credits;
+	}
+}
+
+void AActPlayerState::SavePlayerState_Implementation(UActSaveGame* SaveObject)
+{
+	if(SaveObject)
+	{
+		SaveObject->Credits = Credits;
+	}
+
 }
