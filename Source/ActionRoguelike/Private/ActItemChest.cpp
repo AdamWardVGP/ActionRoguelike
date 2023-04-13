@@ -22,6 +22,13 @@ AActItemChest::AActItemChest()
 	SetReplicates(true);
 }
 
+void AActItemChest::OnActorLoaded_Implementation()
+{
+	IActGameplayInterface::OnActorLoaded_Implementation();
+	//update based on our initial state
+	OnRep_LidOpened();
+}
+
 void AActItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	bLidOpened = !bLidOpened;

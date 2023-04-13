@@ -13,6 +13,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("act.SpawnBots"), false, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
@@ -228,7 +229,7 @@ void AActGameModeBase::WriteSaveGame()
 		}
 	}
 
-	CurrentSaveGame->SavedActorPositions.Empty();
+	CurrentSaveGame->SavedActorData.Empty();
 
 	for(FActorIterator It(GetWorld()); It; ++It)
 	{
@@ -241,11 +242,19 @@ void AActGameModeBase::WriteSaveGame()
 			continue;
 		}
 
-		FSavedTransform TransformData;
-		TransformData.ActorName = Actor->GetName();
-		TransformData.Transform = Actor->GetActorTransform();
+		FSavedActorData ActorData;
+		ActorData.ActorName = Actor->GetName();
+		ActorData.Transform = Actor->GetActorTransform();
 
-		CurrentSaveGame->SavedActorPositions.Add(TransformData);
+
+		FMemoryWriter MemWriter(ActorData.ByteData);
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		//Find only variables with UPROPERTY(SaveGame)
+		Ar.ArIsSaveGame = true;
+		//Converts Actor's SaveGame UPROPERTY fields into binary array
+		Actor->Serialize(Ar);
+
+		CurrentSaveGame->SavedActorData.Add(ActorData);
 	}
 
 
@@ -278,17 +287,27 @@ void AActGameModeBase::LoadSaveGame()
 				continue;
 			}
 
-			for (FSavedTransform ActorData : CurrentSaveGame->SavedActorPositions)
+			for (FSavedActorData ActorData : CurrentSaveGame->SavedActorData)
 			{
 				if (ActorData.ActorName == Actor->GetName())
 				{
 					Actor->SetActorTransform(ActorData.Transform);
+
+					FMemoryReader MemReader(ActorData.ByteData);
+					FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
+					//Find only variables with UPROPERTY(SaveGame)
+					Ar.ArIsSaveGame = true;
+					//Converts binary array back to actor's variables
+					Actor->Serialize(Ar);
+
+					IActGameplayInterface::Execute_OnActorLoaded(Actor);
+
 					break;
 				}
 			}
 		}
 
-		for (FSavedTransform ActorData : CurrentSaveGame->SavedActorPositions)
+		for (FSavedActorData ActorData : CurrentSaveGame->SavedActorData)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SavedActor %s"), *ActorData.ActorName);
 		}

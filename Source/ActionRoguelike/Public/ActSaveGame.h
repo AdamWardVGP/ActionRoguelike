@@ -7,7 +7,7 @@
 #include "ActSaveGame.generated.h"
 
 USTRUCT()
-struct FSavedTransform
+struct FSavedActorData
 {
 	GENERATED_BODY()
 
@@ -18,6 +18,9 @@ public:
 
 	UPROPERTY()
 	FTransform Transform;
+
+	UPROPERTY()
+	TArray<uint8> ByteData;
 };
 
 /**
@@ -34,5 +37,5 @@ public:
 	int32 Credits;
 
 	UPROPERTY()
-	TArray<FSavedTransform> SavedActorPositions;
+	TArray<FSavedActorData> SavedActorData;
 };

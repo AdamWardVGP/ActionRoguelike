@@ -27,4 +27,10 @@ public:
 	//BlueprintNativeEvent - meant to be overridden *in blueprints* but has a default implementation in C++
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Interact(APawn* InstigatorPawn);
+
+
+	/* Called after the actor state has been loaded from SaveGame file. */
+	UFUNCTION(BlueprintNativeEvent)
+	void OnActorLoaded();
+
 };
