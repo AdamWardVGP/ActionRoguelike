@@ -45,7 +45,7 @@ void AActMagicProj::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 			UE_LOG(LogTemp, Warning, TEXT("Calling explode"));
 			Explode();
 
-			if(ActionComp)
+			if(ActionComp && HasAuthority())
 			{
 				ActionComp->AddAction(GetInstigator(), HitTriggeredActionEffect);
 			}

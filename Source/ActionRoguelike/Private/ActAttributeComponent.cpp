@@ -61,6 +61,7 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 		return false;
 	}
 
+
 	float OldHealth = Health;
 
 	if(Delta < 0.0f)
@@ -68,25 +69,29 @@ bool UActAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float De
 		Delta *= CVarDamageMultiplier.GetValueOnGameThread();
 	}
 
-	Health = FMath::Clamp(Health + Delta, 0, MaxHealth);
+	float NewHealth = FMath::Clamp(Health + Delta, 0, MaxHealth);
+	float ActualDelta = NewHealth - OldHealth;
 
-	float ActualDelta = Health - OldHealth;
 
-	//OnHealthChanged.Broadcast(InstigatorActor, this, Health, ActualDelta);
-	if(ActualDelta != 0.0f)
+	if(GetOwner()->HasAuthority())
 	{
+		Health = NewHealth;
 
-		//if called by a client this just calls locally, when called from the server
-		//it will be broadcast to all clients
-		MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
-	}
-
-	if(ActualDelta <0.0f && Health == 0.0f)
-	{
-		AActGameModeBase* GM = GetWorld()->GetAuthGameMode<AActGameModeBase>();
-		if(GM)
+		if (ActualDelta != 0.0f)
 		{
-			GM->OnActorKilled(GetOwner(), InstigatorActor);
+
+			//if called by a client this just calls locally, when called from the server
+			//it will be broadcast to all clients
+			MulticastHealthChanged(InstigatorActor, Health, ActualDelta);
+		}
+
+		if (ActualDelta < 0.0f && Health == 0.0f)
+		{
+			AActGameModeBase* GM = GetWorld()->GetAuthGameMode<AActGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), InstigatorActor);
+			}
 		}
 	}
 

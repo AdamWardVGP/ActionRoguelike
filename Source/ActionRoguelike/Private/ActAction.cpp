@@ -13,27 +13,24 @@ void UActAction::Initialize(UActActionComponent* NewActionComp)
 
 void UActAction::StartAction_Implementation(AActor* Instigator)
 {
-	//UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this))
-	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
+	//LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
 	UActActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
 
-	bIsRunning = true;
+	RepData.bIsRunning = true;
+	RepData.Instigator = Instigator;
 }
 
 void UActAction::StopAction_Implementation(AActor* Instigator)
 {
-
-	//ensureAlways(bIsRunning);
-
-	//UE_LOG(LogTemp, Log, TEXT("Stopping: %s"), *GetNameSafe(this))
-	LogOnScreen(this, FString::Printf(TEXT("Stopping: %s"), *ActionName.ToString()), FColor::White);
+	//LogOnScreen(this, FString::Printf(TEXT("Stopping: %s"), *ActionName.ToString()), FColor::White);
 
 	UActActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantsTags);
 
-	bIsRunning = false;
+	RepData.bIsRunning = false;
+	RepData.Instigator = Instigator;
 }
 
 UWorld* UActAction::GetWorld() const
@@ -50,29 +47,24 @@ UWorld* UActAction::GetWorld() const
 
 UActActionComponent* UActAction::GetOwningComponent() const
 {
-	//This is an option but we don't want to iterate through components to find it every time we need this.
-	//AActor* Actor = Cast<AActor>(GetOuter());
-	//return Cast<UActActionComponent>(Actor->GetComponentByClass(UActActionComponent::StaticClass()));
-
 	return OwnerActionComponent;
 }
 
-void UActAction::OnRep_IsRunning()
+void UActAction::OnRep_RepData()
 {
-	if(bIsRunning)
+	if(RepData.bIsRunning)
 	{
-		//TODO we'll need to pass around instigator
-		StartAction(nullptr);
+		StartAction(RepData.Instigator);
 	}
 	else
 	{
-		StopAction(nullptr);
+		StopAction(RepData.Instigator);
 	}
 }
 
 bool UActAction::IsRunning() const
 {
-	return bIsRunning;
+	return RepData.bIsRunning;
 }
 
 bool UActAction::CanStart_Implementation(AActor* Instigator)
@@ -90,7 +82,7 @@ void UActAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty> & Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UActAction, bIsRunning);
+	DOREPLIFETIME(UActAction, RepData);
 	DOREPLIFETIME(UActAction, OwnerActionComponent);
 }
 

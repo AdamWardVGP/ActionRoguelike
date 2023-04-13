@@ -129,6 +129,7 @@ void AActCharacter::OnHealthChanged(AActor* InstigatorActor, UActAttributeCompon
 		{
 			APlayerController* PlayerController = Cast<APlayerController>(GetController());
 			DisableInput(PlayerController);
+			SetLifeSpan(5.0f);
 		} else
 		{
 			GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);

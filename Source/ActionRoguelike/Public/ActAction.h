@@ -10,6 +10,25 @@
 
 class UWorld;
 
+//Wrapping both fields in a struct allows us to know both fields are synchronized with one another
+//Any payload arriving on a machine will get both values updated appropriately.
+USTRUCT()
+struct FActionRepData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	bool bIsRunning;
+
+	//Structs actually work opposite for replication
+	//all these fields automatically are replicated.
+	//Instead we have to mark it "NotReplicated"
+	UPROPERTY()
+	AActor* Instigator;
+};
+
+
 /**
  * 
  */
@@ -34,11 +53,11 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	UActActionComponent* GetOwningComponent() const;
 
-	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
-	bool bIsRunning;
+	UPROPERTY(ReplicatedUsing="OnRep_RepData")
+	FActionRepData RepData;
 
 	UFUNCTION()
-	void OnRep_IsRunning();
+	void OnRep_RepData();
 
 public:
 
