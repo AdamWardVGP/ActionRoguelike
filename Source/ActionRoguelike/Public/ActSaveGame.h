@@ -6,6 +6,20 @@
 #include "GameFramework/SaveGame.h"
 #include "ActSaveGame.generated.h"
 
+USTRUCT()
+struct FSavedTransform
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	FString ActorName;
+
+	UPROPERTY()
+	FTransform Transform;
+};
+
 /**
  * 
  */
@@ -19,4 +33,6 @@ public:
 	UPROPERTY()
 	int32 Credits;
 
+	UPROPERTY()
+	TArray<FSavedTransform> SavedActorPositions;
 };

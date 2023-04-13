@@ -5,6 +5,7 @@
 
 #include "ActAttributeComponent.h"
 #include "ActCharacter.h"
+#include "ActGameplayInterface.h"
 #include "ActPlayerState.h"
 #include "ActSaveGame.h"
 #include "EngineUtils.h"
@@ -26,6 +27,7 @@ void AActGameModeBase::InitGame(const FString& MapName, const FString& Options, 
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
+	UE_LOG(LogTemp, Warning, TEXT("InitGame"));
 	LoadSaveGame();
 }
 
@@ -226,6 +228,27 @@ void AActGameModeBase::WriteSaveGame()
 		}
 	}
 
+	CurrentSaveGame->SavedActorPositions.Empty();
+
+	for(FActorIterator It(GetWorld()); It; ++It)
+	{
+
+		AActor* Actor = *It;
+
+		//Only interested in our custom gameplay actors
+		if(!Actor->Implements<UActGameplayInterface>())
+		{
+			continue;
+		}
+
+		FSavedTransform TransformData;
+		TransformData.ActorName = Actor->GetName();
+		TransformData.Transform = Actor->GetActorTransform();
+
+		CurrentSaveGame->SavedActorPositions.Add(TransformData);
+	}
+
+
 	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
 }
 
@@ -239,7 +262,38 @@ void AActGameModeBase::LoadSaveGame()
 			UE_LOG(LogTemp, Warning, TEXT("Failed to load SaveGame Data."))
 			return;
 		}
+
 		UE_LOG(LogTemp, Warning, TEXT("Loaded SaveGame Data."))
+
+		for (FActorIterator It(GetWorld()); It; ++It)
+		{
+			
+			AActor* Actor = *It;
+
+			UE_LOG(LogTemp, Warning, TEXT("WorldActor %s"), *GetNameSafe(Actor));
+
+			//Only interested in our custom gameplay actors
+			if (!Actor->Implements<UActGameplayInterface>())
+			{
+				continue;
+			}
+
+			for (FSavedTransform ActorData : CurrentSaveGame->SavedActorPositions)
+			{
+				if (ActorData.ActorName == Actor->GetName())
+				{
+					Actor->SetActorTransform(ActorData.Transform);
+					break;
+				}
+			}
+		}
+
+		for (FSavedTransform ActorData : CurrentSaveGame->SavedActorPositions)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SavedActor %s"), *ActorData.ActorName);
+		}
+
+
 	}
 	else
 	{
