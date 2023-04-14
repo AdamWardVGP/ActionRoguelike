@@ -53,7 +53,7 @@ void AActPlayerState::LoadPlayerState_Implementation(UActSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
-		Credits = SaveObject->Credits;
+		ModifyCredits(nullptr, SaveObject->Credits);
 	}
 }
 

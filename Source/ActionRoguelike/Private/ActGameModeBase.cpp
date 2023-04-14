@@ -44,14 +44,15 @@ void AActGameModeBase::StartPlay()
 
 void AActGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
-
+	// Executing before Super:: so that variable are initialized before 'beginplayingstate' is called in PlayerController
 	AActPlayerState* PlayerState = NewPlayer->GetPlayerState<AActPlayerState>();
 	if(PlayerState)
 	{
 		//this doesn't work with multiplayer, everyone loads the same state
 		PlayerState->LoadPlayerState(CurrentSaveGame);
 	}
+
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
 
 void AActGameModeBase::SpawnBotTimerElapsed()

@@ -9,3 +9,9 @@ void AActPlayerController::SetPawn(APawn* InPawn)
 
 	OnPawnChanged.Broadcast(InPawn);
 }
+
+void AActPlayerController::BeginPlayingState()
+{
+	Super::BeginPlayingState();
+	BlueprintBeginPlayingState();
+}

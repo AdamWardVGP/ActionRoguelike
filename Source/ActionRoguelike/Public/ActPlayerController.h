@@ -24,5 +24,14 @@ protected:
 
 
 	virtual void SetPawn(APawn* InPawn) override;
-	
+
+	/*
+	 * Called when player controller is ready to begin playing. Useful to initialize UI which may have difficulty
+	 * during BeginPlay. Especially in multiplayer when clients may not have received all data such as PlayerState.
+	 */
+	virtual void BeginPlayingState() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BlueprintBeginPlayingState();
+
 };
