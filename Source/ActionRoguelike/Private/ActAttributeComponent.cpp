@@ -126,12 +126,17 @@ float UActAttributeComponent::GetMaxRage()
 bool UActAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 {
 	const float OldRage = Rage;
-	Rage = FMath::Clamp(Rage + Delta, 0, MaxRage);
-	const float ActualDelta = Rage - OldRage;
+	const float NewRage = FMath::Clamp(Rage + Delta, 0, MaxRage);
+	const float ActualDelta = NewRage - OldRage;
 
-	if (ActualDelta != 0.0f)
+	if(GetOwner()->HasAuthority())
 	{
-		MulticastRageChanged(InstigatorActor, Rage, Delta);
+		Rage = NewRage;
+
+		if (ActualDelta != 0.0f)
+		{
+			MulticastRageChanged(InstigatorActor, Rage, Delta);
+		}
 	}
 
 	return ActualDelta != 0;

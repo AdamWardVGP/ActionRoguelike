@@ -91,7 +91,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyRageChange(AActor* InstigatorActor, float Delta);
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 	UPROPERTY(BlueprintAssignable)

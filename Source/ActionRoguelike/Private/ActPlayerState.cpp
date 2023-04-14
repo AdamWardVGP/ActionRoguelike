@@ -19,12 +19,14 @@ bool AActPlayerState::ModifyCredits(AActor* ModifySource, int32 Amount)
 		return false;
 	}
 
-	Credits += Amount;
-
-
-	if (Amount != 0.0f)
+	if(HasAuthority())
 	{
-		OnCreditsChanged.Broadcast(this, Credits, Amount);
+		Credits += Amount;
+
+		if (Amount != 0.0f)
+		{
+			OnCreditsChanged.Broadcast(this, Credits, Amount);
+		}
 	}
 
 	return true;
