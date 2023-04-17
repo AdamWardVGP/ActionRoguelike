@@ -51,3 +51,9 @@ void UActActionEffect::StopAction_Implementation(AActor* Instigator)
 		ActionComponent->RemoveAction(this);
 	}
 }
+
+float UActActionEffect::getTimeRemaining() const
+{
+	float EndTime = TimeStarted + Duration;
+	return EndTime - GetWorld()->TimeSeconds;
+}

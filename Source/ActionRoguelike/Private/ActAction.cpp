@@ -3,7 +3,6 @@
 
 #include "ActAction.h"
 #include "ActActionComponent.h"
-#include "ActionRoguelike/ActionRoguelike.h"
 #include "Net/UnrealNetwork.h"
 
 void UActAction::Initialize(UActActionComponent* NewActionComp)
@@ -20,6 +19,10 @@ void UActAction::StartAction_Implementation(AActor* Instigator)
 
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
+
+	TimeStarted = GetWorld()->TimeSeconds;
+
+	Comp->OnActionStarted.Broadcast(Comp, this);
 }
 
 void UActAction::StopAction_Implementation(AActor* Instigator)
@@ -31,6 +34,8 @@ void UActAction::StopAction_Implementation(AActor* Instigator)
 
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;
+
+	Comp->OnActionStopped.Broadcast(Comp, this);
 }
 
 UWorld* UActAction::GetWorld() const

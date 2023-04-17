@@ -39,6 +39,9 @@ class ACTIONROGUELIKE_API UActAction : public UObject
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI" )
+	UTexture2D* Icon;
+
 	UPROPERTY(Replicated)
 	UActActionComponent* OwnerActionComponent;
 
@@ -58,6 +61,8 @@ protected:
 
 	UFUNCTION()
 	void OnRep_RepData();
+
+	float TimeStarted;
 
 public:
 

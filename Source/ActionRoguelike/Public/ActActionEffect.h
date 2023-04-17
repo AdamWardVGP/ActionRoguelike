@@ -22,6 +22,9 @@ public:
 
 	void StopAction_Implementation(AActor* Instigator) override;
 
+	UFUNCTION(BlueprintCallable)
+	float getTimeRemaining() const;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effect")

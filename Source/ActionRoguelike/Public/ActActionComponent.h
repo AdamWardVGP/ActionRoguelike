@@ -10,6 +10,8 @@
 
 class UActAction;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionStateChanged, UActActionComponent*, OwningComp, UActAction*, Action);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API UActActionComponent : public UActorComponent
 {
@@ -28,8 +30,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StartActionByName(AActor* Instigator, FName ActionName);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStateChanged OnActionStarted;
+
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionName);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnActionStateChanged OnActionStopped;
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void RemoveAction(UActAction* ActActionEffect);
@@ -45,7 +53,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<UActAction>> DefaultActions;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	TArray<UActAction*> Actions;
 
 	virtual void BeginPlay() override;
