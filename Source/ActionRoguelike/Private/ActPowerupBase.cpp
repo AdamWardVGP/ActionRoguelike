@@ -32,6 +32,11 @@ void AActPowerupBase::Interact_Implementation(APawn* InstigatorPawn)
 	OnPickup();
 }
 
+FText AActPowerupBase::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}
+
 void AActPowerupBase::OnPickup()
 {
 	MulticastOnPickup();

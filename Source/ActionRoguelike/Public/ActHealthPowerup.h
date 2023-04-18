@@ -18,4 +18,6 @@ class ACTIONROGUELIKE_API AActHealthPowerup : public AActPowerupBase
 
 public:
 	AActHealthPowerup();
+
+	FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
 };

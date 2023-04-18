@@ -6,6 +6,7 @@
 #include "ActAttributeComponent.h"
 #include "ActPlayerState.h"
 
+#define LOCTEXT_NAMESPACE "InteractableActors"
 
 AActHealthPowerup::AActHealthPowerup()
 {
@@ -29,3 +30,16 @@ void AActHealthPowerup::Interact_Implementation(APawn* InstigatorPawn)
 		}
 	}
 }
+
+FText AActHealthPowerup::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	UActAttributeComponent* AttributeComponent = UActAttributeComponent::GetAttributes(InstigatorPawn);
+	if(AttributeComponent && AttributeComponent->IsAtMaxHealth())
+	{
+		return LOCTEXT("HealthPotion_FullHealthWarning", "Already at full health.");
+	}
+
+	return FText::Format(LOCTEXT("HealthPotion_InteractMessage", "Cost {0} Credits. Restore to max health."), CreditCost);
+}
+
+#undef LOCTEXT_NAMESPACE
