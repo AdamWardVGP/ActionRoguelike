@@ -3,6 +3,8 @@
 
 #include "ActActionEffect.h"
 
+#include "GameFramework/GameStateBase.h"
+
 UActActionEffect::UActActionEffect()
 {
 	bAutoStart = true;
@@ -54,6 +56,12 @@ void UActActionEffect::StopAction_Implementation(AActor* Instigator)
 
 float UActActionEffect::getTimeRemaining() const
 {
-	float EndTime = TimeStarted + Duration;
-	return EndTime - GetWorld()->TimeSeconds;
+	AGameStateBase* GS = GetWorld()->GetGameState<AGameStateBase>();
+	if(GS)
+	{
+		float EndTime = TimeStarted + Duration;
+		return EndTime - GS->GetServerWorldTimeSeconds();
+	}
+
+	return Duration;
 }

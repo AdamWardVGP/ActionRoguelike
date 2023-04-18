@@ -20,7 +20,10 @@ void UActAction::StartAction_Implementation(AActor* Instigator)
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
 
-	TimeStarted = GetWorld()->TimeSeconds;
+	if(GetOwningComponent()->GetOwnerRole() == ROLE_Authority)
+	{
+		TimeStarted = GetWorld()->TimeSeconds;
+	}
 
 	Comp->OnActionStarted.Broadcast(Comp, this);
 }
@@ -89,6 +92,7 @@ void UActAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty> & Ou
 
 	DOREPLIFETIME(UActAction, RepData);
 	DOREPLIFETIME(UActAction, OwnerActionComponent);
+	DOREPLIFETIME(UActAction, TimeStarted);
 }
 
 bool UActAction::IsSupportedForNetworking() const
