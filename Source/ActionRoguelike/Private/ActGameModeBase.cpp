@@ -3,12 +3,15 @@
 
 #include "ActGameModeBase.h"
 
+#include "ActActionComponent.h"
 #include "ActAttributeComponent.h"
 #include "ActCharacter.h"
 #include "ActGameplayInterface.h"
+#include "ActMonsterData.h"
 #include "ActPlayerState.h"
 #include "ActSaveGame.h"
 #include "EngineUtils.h"
+#include "ActionRoguelike/ActionRoguelike.h"
 #include "AI/ActAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
@@ -129,6 +132,32 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 		AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator, SpawnParams);
+
+		if(MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonsterTable->GetAllRows("ActGameModeBase", Rows);
+
+			// Get Random Enemy
+			int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+			FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Locations[0], FRotator::ZeroRotator);
+			if(NewBot)
+			{
+				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(SelectedRow->MonsterData)));
+
+				UActActionComponent* ActionComp = Cast<UActActionComponent>(NewBot->GetComponentByClass(UActActionComponent::StaticClass()));
+
+				if(ActionComp)
+				{
+					for(TSubclassOf<UActAction> ActionClass : SelectedRow->MonsterData->Actions)
+					{
+						ActionComp->AddAction(NewBot, ActionClass);
+					}
+				}
+			}
+		}
 
 		//DrawDebugSphere(GetWorld(), Locations[0], 50.f, 20, FColor::Blue, false, 60.0f);
 		//UE_LOG(LogTemp, Warning, TEXT("Actor spawned: %p"), SpawnActor);
