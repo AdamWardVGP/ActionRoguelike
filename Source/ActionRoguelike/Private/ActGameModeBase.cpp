@@ -13,6 +13,7 @@
 #include "EngineUtils.h"
 #include "ActionRoguelike/ActionRoguelike.h"
 #include "AI/ActAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -77,8 +78,6 @@ void AActGameModeBase::SpawnBotTimerElapsed()
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("At maximum bot capacity. Skipping bot spawn."))
-
 	float MaxBotCount = 10.f;
 
 	if(DifficultyCurve)
@@ -128,10 +127,7 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 
 	if(Locations.Num() > 0)
 	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-		AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator, SpawnParams);
+		//AActor* SpawnActor = GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator, SpawnParams);
 
 		if(MonsterTable)
 		{
@@ -142,25 +138,50 @@ void AActGameModeBase::OnSpawnAIQueryCompleted(UEnvQueryInstanceBlueprintWrapper
 			int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
 			FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
 
-			AActor* NewBot = GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Locations[0], FRotator::ZeroRotator);
-			if(NewBot)
+			UAssetManager* Manager = UAssetManager::GetIfValid();
+			if(Manager)
 			{
-				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(SelectedRow->MonsterData)));
+				TArray<FName> Bundles;
+				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &AActGameModeBase::OnMonsterLoaded, SelectedRow->MonsterId, Locations[0]);
+
+				LogOnScreen(this, FString::Printf(TEXT("Loading monster asset: %s"), *SelectedRow->MonsterId.ToString()));
+
+				Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles, Delegate);
+			}
+		}
+	}
+}
+
+void AActGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	LogOnScreen(this, FString::Printf(TEXT("Monster asset loaded")));
+
+	UAssetManager* Manager = UAssetManager::GetIfValid();
+	if(Manager)
+	{
+		UActMonsterData* MonsterData = Cast<UActMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+		if(MonsterData)
+		{
+
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+
+			if (NewBot)
+			{
+				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(MonsterData)));
 
 				UActActionComponent* ActionComp = Cast<UActActionComponent>(NewBot->GetComponentByClass(UActActionComponent::StaticClass()));
 
-				if(ActionComp)
+				if (ActionComp)
 				{
-					for(TSubclassOf<UActAction> ActionClass : SelectedRow->MonsterData->Actions)
+					for (TSubclassOf<UActAction> ActionClass : MonsterData->Actions)
 					{
 						ActionComp->AddAction(NewBot, ActionClass);
 					}
 				}
 			}
 		}
-
-		//DrawDebugSphere(GetWorld(), Locations[0], 50.f, 20, FColor::Blue, false, 60.0f);
-		//UE_LOG(LogTemp, Warning, TEXT("Actor spawned: %p"), SpawnActor);
 	}
 }
 

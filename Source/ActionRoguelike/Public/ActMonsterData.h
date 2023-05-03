@@ -27,6 +27,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Params")
 	UTexture2D* Icon;
 
-
-	
+	FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("Monsters", GetFName());
+	}
 };
