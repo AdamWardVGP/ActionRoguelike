@@ -7,6 +7,8 @@
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 
+DECLARE_CYCLE_STAT(TEXT("StartActionByName"), STAT_StartActionByName, STATGROUP_ACTSTATS);
+
 UActActionComponent::UActActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -91,6 +93,8 @@ void UActActionComponent::RemoveAction(UActAction* ActActionEffect)
 
 bool UActActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
+	SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
+
 	for(UActAction* Action : Actions)
 	{
 		if(Action && Action->ActionName == ActionName)

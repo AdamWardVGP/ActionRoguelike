@@ -13,6 +13,7 @@
 AActMagicProj::AActMagicProj()
 {
 	ProjectileDamage = 20.f;
+	InitialLifeSpan = 10.0f;
 }
 
 void AActMagicProj::PostInitializeComponents()
