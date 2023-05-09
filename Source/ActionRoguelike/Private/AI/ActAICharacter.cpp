@@ -27,7 +27,7 @@ AActAICharacter::AActAICharacter()
 
 	TimeToHitParamName = "TimeToHit";
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	//GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	ActionComp = CreateDefaultSubobject<UActActionComponent>("ActionComponent");
